@@ -1,0 +1,153 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  body, html {
+    height: 100%;
+  }
+
+  .background {
+    background: url("/bglogin.jpg") no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    position: relative;
+  }
+
+  .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 1;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .header {
+    position: absolute;
+    top: 20px;
+    left: 20px; /* ubah dari right: 20px */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  .logo {
+    width: 70px;
+    height: auto;
+  }
+
+  .title {
+    font-size: 25px;
+    color: white;
+    text-align: left;
+    line-height: 1.4;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .login-box {
+    width: 320px;
+    margin: 80px auto 0 auto;;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .login-box h2 {
+    color: #297b81;
+    margin-bottom: 20px;
+  }
+
+  .alert {
+    background-color: #ffe5e5;
+    border: 1px solid #ff4d4d;
+    color: #a30000;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: left;
+    box-shadow: 0px 2px 8px rgba(255, 0, 0, 0.1);
+  }
+
+  .alert ul {
+    margin-left: 20px;
+    list-style-type: disc;
+  }
+
+  .alert li {
+    margin-bottom: 5px;
+  }
+
+  .login-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 20px;
+    background-color: #f6f9d4;
+  }
+
+  .password-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+  }
+
+  .password-wrapper input {
+    width: 100%;
+    padding: 10px 40px 10px 10px; /* biar gak ketimpa icon */
+    margin-bottom: 0px;
+    border: none;
+    border-radius: 20px;
+    background-color: #f6f9d4;
+  }
+
+  .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .login-box button {
+    width: 100%;
+    padding: 10px;
+    background-color: #297b81;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .login-box button:hover {
+    background-color: #225f65;
+  }
+
+  .register {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  .register a {
+    text-decoration: none;
+    color: #666;
+  }
+
+  .register a:hover {
+    color: #297b81;
+  }

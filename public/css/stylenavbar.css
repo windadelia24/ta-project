@@ -1,0 +1,177 @@
+/* Global Reset */
+* {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    height: 100vh;
+    display: flex;
+  }
+
+  #app {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background-color: #3a9d9d;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+    flex-shrink: 0; /* Biar nggak mengecil */
+  }
+
+  .sidebar .logo {
+    width: 80px;
+    display: block;
+    margin: 0 auto 20px;
+  }
+
+  .sidebar .menu {
+    list-style: none;
+    padding: 0;
+  }
+
+  .sidebar .menu li {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sidebar .menu li.active,
+  .sidebar .menu li:hover {
+    background-color: #d5f5f6;
+    color: #3a9d9d;
+    font-weight: bold;
+    border-radius: 0 30px 30px 0;
+  }
+
+  .sidebar .menu li a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Main Section */
+  #main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Topbar */
+  .topbar {
+    height: 60px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 30px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  /* User Info */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-info .user-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+
+  /* Main Content */
+  .main-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    margin: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .main-content h1 {
+    font-size: 28px;
+    color: #1a4d4d;
+  }
+
+/* Button Icon Rapi */
+.btn i {
+    margin-right: 6px;
+}
+
+/* Responsive Table */
+.table-responsive {
+    margin-top: 20px;
+}
+
+/* Pagination */
+.pagination .page-item.active .page-link {
+    background-color: #3a9d9d;
+    border-color: #3a9d9d;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -220px;
+        top: 0;
+        height: 100%;
+        transition: left 0.3s;
+        z-index: 100;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    #main {
+        flex-grow: 1;
+        width: 100%;
+    }
+}
+
+.form-control {
+    appearance: none; /* Hilangkan tampilan default browser */
+    -webkit-appearance: none; /* Untuk browser berbasis WebKit */
+    -moz-appearance: none; /* Untuk Firefox */
+    position: relative;
+    padding-right: 40px; /* Tambahkan ruang untuk ikon */
+}
+
+.form-control-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Ikon tidak dapat diklik */
+    font-size: 16px;
+    color: #6c757d; /* Warna ikon */
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+

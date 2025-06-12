@@ -1,0 +1,78 @@
+<?php
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KadinController;
+use App\Http\Controllers\KapengController;
+use App\Http\Controllers\PengawasController;
+use App\Http\Controllers\PengurusController;
+use App\Http\Controllers\SesiController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', [SesiController::class,'index'])->name('login');
+    Route::post('/', [SesiController::class,'login']);
+    Route::get('/register', [SesiController::class, 'showRegister'])->name('register');
+    Route::post('/register', [SesiController::class, 'register']);
+});
+
+Route::get('/home', function () {
+    $user = Auth::user();
+
+    switch ($user->role) {
+        case 'admin':
+            return redirect('/admin');
+        case 'pengurus':
+            return redirect('/pengurus');
+        case 'pengawas':
+            return redirect('/pengawas');
+        case 'kadin':
+            return redirect('/kadin');
+        case 'kapeng':
+            return redirect('/kapeng');
+        default:
+            abort(403, 'Akses tidak diizinkan.');
+    }
+});
+
+Route::middleware(['auth'])->group(function () {
+    //admin
+    Route::get('/admin', [AdminController::class,'index'])->middleware('userAkses:admin')->name('admin');
+    Route::get('/akun', [AdminController::class, 'listakun'])->middleware('userAkses:admin')->name('listakun');
+    Route::get('/akun/tambah', [AdminController::class, 'tambahakun'])->middleware('userAkses:admin')->name('tambahakun');
+    Route::post('/akun/tambah', [AdminController::class,'createakun'])->middleware('userAkses:admin')->name('createakun');
+    Route::get('/akun/edit/{nik_nip}', [AdminController::class, 'editakun'])->middleware('userAkses:admin')->name('editakun');
+    Route::post('/akun/edit/{nik_nip}', [AdminController::class, 'updateakun'])->middleware('userAkses:admin')->name('updateakun');
+    Route::get('/akun/hapus/{nik_nip}', [AdminController::class, 'hapusakun'])->middleware('userAkses:admin')->name('hapusakun');
+    Route::get('/akun/cari', [AdminController::class, 'cariakun'])->middleware('userAkses:admin')->name('cariakun');
+    Route::get('/koperasi', [AdminController::class, 'listkoperasi'])->middleware('userAkses:admin,pengawas,kadin,kapeng')->name('listkoperasi');
+    Route::get('/koperasi/tambah', [AdminController::class, 'tambahkoperasi'])->middleware('userAkses:admin')->name('tambahkoperasi');
+    Route::post('/koperasi/tambah', [AdminController::class, 'createkoperasi'])->middleware('userAkses:admin')->name('createkoperasi');
+    Route::get('/koperasi/edit/{nik}', [AdminController::class, 'editkoperasi'])->middleware('userAkses:admin')->name('editkoperasi');
+    Route::post('/koperasi/edit/{nik}', [AdminController::class, 'updatekoperasi'])->middleware('userAkses:admin')->name('updatekoperasi');
+    Route::get('/koperasi/hapus/{nik}', [AdminController::class, 'hapuskoperasi'])->middleware('userAkses:admin')->name('hapuskoperasi');
+    Route::get('/koperasi/cari', [AdminController::class, 'carikoperasi'])->middleware('userAkses:admin')->name('carikoperasi');
+
+    Route::get('/pengurus', [PengurusController::class,'index'])->middleware('userAkses:pengurus');
+    Route::get('/tindaklanjut', [PengurusController::class, 'listtindaklanjut'])->name('listtindaklanjut');
+    Route::get('/tindaklanjut/input/{id_pemeriksaan}', [PengurusController::class, 'inputtindaklanjut'])->middleware('userAkses:pengurus')->name('inputtindaklanjut');
+    Route::post('/tindaklanjut/input', [PengurusController::class, 'storetindaklanjut'])->middleware('userAkses:pengurus')->name('storetindaklanjut');
+    Route::get('/tindaklanjut/edit/{id_tindaklanjut}', [PengurusController::class, 'edittindaklanjut'])->middleware('userAkses:pengurus')->name('edittindaklanjut');
+    Route::get('/tindaklanjut/hapus/{id_tindaklanjut}', [PengurusController::class, 'hapustindaklanjut'])->middleware('userAkses:pengurus')->name('hapustindaklanjut');
+
+    //pengawas
+    Route::get('/pengawas', [PengawasController::class,'index'])->middleware('userAkses:pengawas');
+    Route::get('/pemeriksaan', [PengawasController::class, 'listpemeriksaan'])->middleware('userAkses:admin,pengawas,kadin,kapeng')->name('listperiksa');
+    Route::get('/pemeriksaan/input', [PengawasController::class, 'inputperiksa'])->middleware('userAkses:pengawas')->name('inputperiksa');
+    Route::post('/pemeriksaan/input', [PengawasController::class, 'storeperiksa'])->middleware('userAkses:pengawas')->name('storeperiksa');
+    Route::get('/pemeriksaan/lihat/{id_pemeriksaan}', [PengawasController::class, 'lihatperiksa'])->name('lihatperiksa');
+    Route::get('/pemeriksaan/edit/{id_pemeriksaan}', [PengawasController::class, 'editperiksa'])->middleware('userAkses:pengawas')->name('editperiksa');
+    Route::post('/pemeriksaan/edit/{id_pemeriksaan}', [PengawasController::class, 'updateperiksa'])->middleware('userAkses:pengawas')->name('updateperiksa');
+
+    Route::get('/kadin', [KadinController::class,'index'])->middleware('userAkses:kadin');
+
+    Route::get('/kapeng', [KapengController::class,'index'])->middleware('userAkses:kapeng');
+
+    Route::get('/logout', [SesiController::class,'logout']);
+});
+
