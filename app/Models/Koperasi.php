@@ -62,4 +62,9 @@ class Koperasi extends Model
     {
         return $this->hasMany(Pengurus::class, 'nik', 'nik');
     }
+
+    public function pengaduan()
+    {
+        return $this->hasMany(Pengaduan::class, 'nik', 'nik');
+    }
 }

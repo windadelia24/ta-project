@@ -35,8 +35,7 @@
                     <option value="" disabled selected hidden>Pilih Role</option>
                     <option value="pengurus">Pengurus</option>
                     <option value="pengawas">Pengawas</option>
-                    <option value="kadin">Kadin</option>
-                    <option value="kapeng">Kapeng</option>
+                    <option value="kabid">Kabid</option>
                     <option value="admin">Admin</option>
                 </select>
                 <i class="fas fa-caret-down form-control-icon"></i>

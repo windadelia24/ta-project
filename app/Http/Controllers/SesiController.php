@@ -35,10 +35,8 @@ class SesiController extends Controller
                 return redirect('admin');
             } elseif (Auth::user()->role == 'pengawas'){
                 return redirect('pengawas');
-            } elseif (Auth::user()->role == 'kapeng'){
-                return redirect('kapeng');
-            } elseif (Auth::user()->role == 'kadin'){
-                return redirect('kadin');
+            } elseif (Auth::user()->role == 'kabid'){
+                return redirect('kabid');
             }
         }else{
             return redirect('')->withErrors('Email atau password salah')->withInput();
@@ -100,4 +98,8 @@ class SesiController extends Controller
         return redirect()->route('login')->with('success', 'Registrasi berhasil, silahkan login!');
     }
 
+    function profile(){
+        $user = Auth::user();
+        return view('profile', compact('user'));
+    }
 }

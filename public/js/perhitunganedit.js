@@ -175,6 +175,10 @@ let dataPemeriksaan = {};
             document.getElementById("step4").style.display = "none";
             document.getElementById("step5").style.display = "block";
             document.getElementById("form-title").innerText = "Permodalan";
+
+            kalkulasiPermodalan();
+            kalkulasiSectionPermodalan();
+            kalkulasiSkorPermodalan();
         }
 
         currentStep++;
@@ -1043,12 +1047,6 @@ let dataPemeriksaan = {};
                 kalkulasiSkorPermodalan();
             });
         });
-    });
-
-    window.addEventListener('load', function () {
-        kalkulasiPermodalan();
-        kalkulasiSectionPermodalan();
-        kalkulasiSkorPermodalan();
     });
 
 

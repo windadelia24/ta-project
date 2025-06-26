@@ -41,7 +41,7 @@
                                 <a href="{{ route('edittindaklanjut', $item->tindakLanjut->id_tindaklanjut) }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{{ route('hapustindaklanjut', $item->tindakLanjut->id_tindaklanjut) }}" class="btn btn-danger btn-sm">
+                                <a href="javascript:void(0);" onclick="confirmDelete('{{ route('hapustindaklanjut', $item->tindakLanjut->id_tindaklanjut) }}')" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             @else

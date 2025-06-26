@@ -13,28 +13,19 @@
 
     <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
         <div class="search-container w-50">
-            <input type="text" id="search" class="form-control" placeholder="Cari Data">
+            <input type="text" id="search" class="form-control" placeholder="Cari Data" value="{{ request('search') }}">
         </div>
-        <div class="button-container">
-            <a href="{{ route('tambahkoperasi') }}" class="btn btn-success">
-                <i class="fas fa-plus"></i> Input
-            </a>
-        </div>
+        @if (Auth::check() && Auth::user()->role === 'admin')
+            <div class="button-container">
+                <a href="{{ route('tambahkoperasi') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Input
+                </a>
+            </div>
+        @endif
     </div>
 
     <div id="table-container">
         @include('admin.tablekoperasi')
-    </div>
-
-    <div class="d-flex justify-content-center mt-4">
-        <nav>
-            <ul class="pagination">
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">>></a></li>
-            </ul>
-        </nav>
     </div>
 </div>
 
@@ -61,18 +52,97 @@
 
     // Function untuk live search
     $(document).ready(function () {
+        let searchTimeout;
+
         $('#search').on('keyup', function () {
             let query = $(this).val();
 
-            $.ajax({
-                url: "{{ route('carikoperasi') }}",
-                type: "GET",
-                data: { search: query },
-                success: function (data) {
-                    $('#table-container').html(data);
+            // Clear timeout jika user masih mengetik
+            clearTimeout(searchTimeout);
+
+            // Set timeout untuk mengurangi beban server
+            searchTimeout = setTimeout(function() {
+                $.ajax({
+                    url: "{{ route('carikoperasi') }}",
+                    type: "GET",
+                    data: { search: query },
+                    success: function (data) {
+                        $('#table-container').html(data);
+                        // Re-bind click events untuk pagination
+                        bindPaginationEvents();
+                    },
+                    error: function() {
+                        console.error('Error occurred while searching');
+                    }
+                });
+            }, 300); // 300ms delay
+        });
+
+        // Function untuk bind pagination events
+        function bindPaginationEvents() {
+            $(document).off('click', '.pagination a').on('click', '.pagination a', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                let search = $('#search').val();
+
+                if (url && !$(this).closest('li').hasClass('disabled')) {
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        data: { search: search },
+                        success: function(data) {
+                            $('#table-container').html(data);
+                            bindPaginationEvents(); // Re-bind events
+                        },
+                        error: function() {
+                            console.error('Error occurred while paginating');
+                        }
+                    });
                 }
             });
-        });
+        }
+
+        // Initial bind
+        bindPaginationEvents();
     });
 </script>
+<style>
+    .pagination {
+        margin: 0;
+    }
+
+    .pagination .page-link {
+        border-radius: 6px;
+        margin: 0 2px;
+        border: 1px solid #dee2e6;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .spinner-border {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    #loading {
+        padding: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .akun-container {
+            padding: 10px;
+        }
+
+        .row .col-md-4 {
+            margin-top: 10px;
+        }
+
+        .search-container .input-group {
+            max-width: 100%;
+        }
+    }
+</style>
 @endsection

@@ -126,12 +126,6 @@
     margin-top: 20px;
 }
 
-/* Pagination */
-.pagination .page-item.active .page-link {
-    background-color: #3a9d9d;
-    border-color: #3a9d9d;
-}
-
 @media (max-width: 768px) {
     .sidebar {
         position: fixed;

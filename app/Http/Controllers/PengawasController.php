@@ -8,13 +8,17 @@ use App\Models\Koperasi;
 use App\Models\Pemeriksaan;
 use App\Models\SubAspekPemeriksaan;
 use App\Models\IndikatorPemeriksaan;
+use App\Models\Pengaduan;
+use App\Models\ResponPengaduan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PengawasController extends Controller
 {
-    function index(){
+    public function index()
+    {
         return view('dashboard');
     }
 
@@ -989,5 +993,129 @@ class PengawasController extends Controller
         }
 
         return redirect()->route('listperiksa')->with('success', 'Pemeriksaan berhasil diupdate.');
+    }
+
+    public function fileperiksa($id_pemeriksaan){
+        $pemeriksaan = Pemeriksaan::with('koperasi')->findOrFail($id_pemeriksaan);
+
+        $pengawasList = User::where('role', 'pengawas')->select('name', 'nik_nip')->get();
+
+        return view('pengawas.inputfileperiksa', compact('pemeriksaan', 'pengawasList'));
+    }
+
+    public function generatefile(Request $request, $id_pemeriksaan)
+    {
+        Carbon::setLocale('id');
+        // Ambil data pemeriksaan beserta koperasi
+        $pemeriksaan = Pemeriksaan::with('koperasi', 'aspekPemeriksaan.subAspek')->findOrFail($id_pemeriksaan);
+
+        // Ambil data inputan dari request
+        $data = $request->all();
+
+        $pengurus = $request->pengurus; // ini array inputan pengurus dari form
+
+        $aspekTk = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Tata Kelola')->first();
+        $aspekPr = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Profil Resiko')->first();
+        $aspekKk = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Kinerja Keuangan')->first();
+        $aspekPk = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Permodalan')->first();
+
+        $aspekProfilResikoId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
+            ->where('nama_aspek', 'Profil Resiko')
+            ->value('id_aspek');
+
+        $subAspekPr = [];
+        if ($aspekProfilResikoId) {
+            $subAspekPr = SubAspekPemeriksaan::where('id_aspek', $aspekProfilResikoId)->get();
+        }
+
+        // Ambil id aspek Kinerja Keuangan
+        $aspekKinerjaKeuanganId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
+            ->where('nama_aspek', 'Kinerja Keuangan')
+            ->value('id_aspek');
+
+        $subAspekKk = [];
+        if ($aspekKinerjaKeuanganId) {
+            $subAspekKk = SubAspekPemeriksaan::where('id_aspek', $aspekKinerjaKeuanganId)->get();
+        }
+
+        // Ambil id aspek Tata Kelola
+        $aspekTataKelolaId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
+            ->where('nama_aspek', 'Tata Kelola')
+            ->value('id_aspek');
+
+        $subAspekTk = [];
+        if ($aspekTataKelolaId) {
+            $subAspekTk = SubAspekPemeriksaan::where('id_aspek', $aspekTataKelolaId)->get();
+        }
+
+        // Ambil id aspek Permodalan
+        $aspekPermodalanId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
+            ->where('nama_aspek', 'Permodalan')
+            ->value('id_aspek');
+
+        $subAspekPk = [];
+        if ($aspekPermodalanId) {
+            $subAspekPk = SubAspekPemeriksaan::where('id_aspek', $aspekPermodalanId)->get();
+        }
+
+        return view('pengawas.suratba', compact('pemeriksaan', 'data', 'pengurus', 'aspekTk', 'aspekPr', 'aspekKk', 'aspekPk'
+        , 'subAspekPr', 'subAspekKk', 'subAspekTk', 'subAspekPk'));
+    }
+
+    public function inputrespon(Request $request)
+    {
+        // Validasi input respon
+        $request->validate([
+            'id_pengaduan' => 'required|exists:pengaduan,id_pengaduan',
+            'respon' => 'required|string',
+        ]);
+
+        // Simpan respon ke tabel respon_pengaduan
+        ResponPengaduan::create([
+            'id_pengaduan' => $request->id_pengaduan,
+            'nama_responder' => Auth::user()->name,
+            'respon' => $request->respon,
+        ]);
+
+        // Update status pengaduan menjadi Direspon
+        Pengaduan::where('id_pengaduan', $request->id_pengaduan)->update([
+            'status_pengaduan' => 'Direspon',
+        ]);
+
+        return redirect()->back()->with('success', 'Respon berhasil dikirim dan status pengaduan telah diperbarui.');
+    }
+
+    public function editrespon(Request $request, $id_respon)
+    {
+        // Validasi input
+        $request->validate([
+            'respon' => 'required|string',
+        ]);
+
+        // Cari respon berdasarkan id_respon
+        $respon = ResponPengaduan::findOrFail($id_respon);
+
+        // Update isi respon
+        $respon->update([
+            'respon' => $request->respon,
+        ]);
+
+        return redirect()->back()->with('success', 'Respon berhasil diperbarui.');
+    }
+
+    public function hapusrespon($id_respon)
+    {
+        $respon = ResponPengaduan::findOrFail($id_respon);
+
+        $id_pengaduan = $respon->id_pengaduan;
+
+        $respon->delete();
+
+        // Update status pengaduan menjadi Diajukan lagi
+        Pengaduan::where('id_pengaduan', $id_pengaduan)->update([
+            'status_pengaduan' => 'Diajukan',
+        ]);
+
+        return redirect()->back()->with('success', 'Respon berhasil dihapus.');
     }
 }

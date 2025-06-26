@@ -14,9 +14,9 @@ class AdminController extends Controller
         return view('dashboard');
     }
 
-    function listakun()
+    public function listakun()
     {
-        $users = User::all();
+        $users = User::paginate(10); // 10 data per halaman
         return view('admin.listakun', compact('users'));
     }
 
@@ -113,33 +113,48 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Akun berhasil dihapus.');
     }
 
-    function cariakun(Request $request)
+    public function cariakun(Request $request)
     {
         $search = $request->input('search');
 
         if (empty($search)) {
-            $users = User::all();
+            $users = User::paginate(10);
         } else {
             $users = User::query()
                 ->where('name', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('nik_nip', 'like', "%{$search}%")
                 ->orWhere('role', 'like', "%{$search}%")
-                ->get();
+                ->paginate(10);
+
+            // Append search parameter ke pagination links
+            $users->appends(['search' => $search]);
         }
 
-        // Jika request adalah AJAX, kembalikan partial view
+        // Jika request adalah AJAX, kembalikan partial view dengan pagination
         if ($request->ajax()) {
-            return view('admin.tableakun', compact('users'))->render();
+            $html = view('admin.tableakun', compact('users'))->render();
+            // Gunakan custom pagination view yang sama seperti di main view
+            $pagination = $users->appends(['search' => $search])->links('layout.pagination')->render();
+
+            return response()->json([
+                'html' => $html,
+                'pagination' => $pagination
+            ]);
         }
 
         // Jika bukan AJAX, kembalikan view utama
         return view('admin.listakun', compact('users'));
     }
 
-    function listkoperasi()
+    function listkoperasi(Request $request)
     {
-        $koperasi = Koperasi::all();
+        $koperasi = Koperasi::paginate(10);
+
+        if ($request->ajax()) {
+            return view('admin.tablekoperasi', compact('koperasi'))->render();
+        }
+
         return view('admin.listkoperasi', compact('koperasi'));
     }
 
@@ -244,7 +259,7 @@ class AdminController extends Controller
         $koperasi = Koperasi::where('nik', $nik)->first();
 
         $koperasi->delete();
-        return redirect()->back()->with('success', 'Akun berhasil dihapus.');
+        return redirect()->back()->with('success', 'Koperasi berhasil dihapus.');
     }
 
 
@@ -253,13 +268,16 @@ class AdminController extends Controller
         $search = $request->input('search');
 
         if (empty($search)) {
-            $koperasi = Koperasi::all();
+            $koperasi = Koperasi::paginate(10);
         } else {
             $koperasi = Koperasi::query()
                 ->where('nama_koperasi', 'like', "%{$search}%")
                 ->orWhere('kabupaten', 'like', "%{$search}%")
                 ->orWhere('nbh', 'like', "%{$search}%")
-                ->get();
+                ->paginate(10);
+
+            // Append search parameter to pagination links
+            $koperasi->appends(['search' => $search]);
         }
 
         // Jika request adalah AJAX, kembalikan partial view

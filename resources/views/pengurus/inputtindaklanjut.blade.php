@@ -194,7 +194,7 @@
                 let content = '';
 
                 if (file.type.startsWith('image/')) {
-                    content = `<img src="${e.target.result}" alt="${file.name}" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 5px;">`;
+                    content = `<img src="${e.target.result}" alt="${file.name}" style="max-width: 400px; max-height: 400px; display: block; margin-bottom: 5px;">`;
                 } else if (file.type === 'application/pdf') {
                     content = `<iframe src="${e.target.result}" style="width: 100%; height: 400px;" frameborder="0"></iframe>`;
                 } else {

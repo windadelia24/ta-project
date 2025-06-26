@@ -973,13 +973,13 @@
                     <div class="col-md-4 mb-3">
                     <label for="titipan-dana">1. Titipan Dana Kebajikan Anggota</label>
                     <input type="text" class="form-control rupiah" id="titipan-dana" name="titipan-dana" value="{{ number_format($pemeriksaan->keuangan->titipan_dana ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->titipan_dana ?? 0 }}">
-                    {{-- <input type="hidden" id="titipan-dana-hidden" name="titipan-dana" value="{{ $pemeriksaan->keuangan->titipan_dana ?? 0 }}" > --}}
+                    <input type="hidden" id="titipan-dana-hidden" name="titipan-dana" value="{{ $pemeriksaan->keuangan->titipan_dana ?? 0 }}" >
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="kewajiban-panjang">2. Jumlah Kewajiban Jangka Panjang </label>
                     <input type="text" class="form-control rupiah" id="kewajiban-panjang" name="kewajiban-panjang" value="{{ number_format($pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0 }}">
-                    {{-- <input type="hidden" id="kewajiban-panjang-hidden" name="kewajiban-panjang" value="{{ $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0 }}"> --}}
+                    <input type="hidden" id="kewajiban-panjang-hidden" name="kewajiban-panjang" value="{{ $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0 }}">
                     </div>
                 </div>
             </div>

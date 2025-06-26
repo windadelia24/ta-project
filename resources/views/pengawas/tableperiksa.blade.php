@@ -30,7 +30,7 @@
                             <a href="{{ route('editperiksa', $item->id_pemeriksaan) }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="" class="btn btn-success btn-sm">
+                            <a href="{{ route('fileperiksa', $item->id_pemeriksaan) }}" class="btn btn-success btn-sm">
                                 <i class="fas fa-file"></i>
                             </a>
                         </td>

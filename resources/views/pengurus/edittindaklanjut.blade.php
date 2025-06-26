@@ -14,11 +14,8 @@
         </div>
     @endif
 
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('updatetindaklanjut', $tindaklanjut->id_tindaklanjut) }}" method="POST" enctype="multipart/form-data">
         @csrf
-        @method('PUT')
-
-        <input type="hidden" name="id_pemeriksaan" value="{{ $tindaklanjut->id_pemeriksaan }}">
 
         {{-- A. Aspek Tata Kelola --}}
         <h4 class="fw-bold mt-4">A. Aspek Tata Kelola</h4>
@@ -77,7 +74,7 @@
                                     <a href="{{ $filePath }}" target="_blank">{{ basename($file) }}</a>
                                 @endif
                             </div>
-                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeFile(this, '{{ $file }}', 'deletedFilesBuktiTk')"></i>
+                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeOldFile(this, '{{ $file }}', 'deletedFilesBuktiTk')"></i>
                         </div>
                     </div>
                 @endforeach
@@ -133,7 +130,7 @@
                                     <a href="{{ $filePath }}" target="_blank">{{ basename($file) }}</a>
                                 @endif
                             </div>
-                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeFile(this, '{{ $file }}', 'deletedFilesBuktiPr')"></i>
+                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeOldFile(this, '{{ $file }}', 'deletedFilesBuktiPr')"></i>
                         </div>
                     </div>
                 @endforeach
@@ -181,7 +178,7 @@
                                     <a href="{{ $filePath }}" target="_blank">{{ basename($file) }}</a>
                                 @endif
                             </div>
-                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeFile(this, '{{ $file }}', 'deletedFilesBuktiKk')"></i>
+                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeOldFile(this, '{{ $file }}', 'deletedFilesBuktiKk')"></i>
                         </div>
                     </div>
                 @endforeach
@@ -229,7 +226,7 @@
                                     <a href="{{ $filePath }}" target="_blank">{{ basename($file) }}</a>
                                 @endif
                             </div>
-                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeFile(this, '{{ $file }}', 'deletedFilesBuktiPk')"></i>
+                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeOldFile(this, '{{ $file }}', 'deletedFilesBuktiPk')"></i>
                         </div>
                     </div>
                 @endforeach
@@ -277,7 +274,7 @@
                                     <a href="{{ $filePath }}" target="_blank">{{ basename($file) }}</a>
                                 @endif
                             </div>
-                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeFile(this, '{{ $file }}', 'deletedFilesBuktiTl')"></i>
+                            <i class="fa-regular fa-circle-xmark text-danger delete-old-file" style="cursor: pointer; font-size: 24px; margin-left: 10px;" onclick="removeOldFile(this, '{{ $file }}', 'deletedFilesBuktiTl')"></i>
                         </div>
                     </div>
                 @endforeach
@@ -309,7 +306,7 @@
 
             let newFiles = Array.from(event.target.files);
 
-            if (newFiles.length + selectedFiles[inputName].length > 5) {
+            if (newFiles.length + selectedFiles[inputName].length + countRemainingOldFiles(previewId) > 5) {
                 alert('Maksimal 5 file yang diizinkan per bidang.');
                 return;
             }
@@ -339,6 +336,11 @@
         });
     });
 
+    function countRemainingOldFiles(previewId) {
+        // Hitung elemen file lama yang masih ada di preview
+        return document.querySelectorAll('#' + previewId + ' .old-file').length;
+    }
+
     function updateFilePreview(inputName, previewId) {
         const filePreview = document.getElementById(previewId);
 
@@ -356,7 +358,7 @@
                 let content = '';
 
                 if (file.type.startsWith('image/')) {
-                    content = `<img src="${e.target.result}" alt="${file.name}" style="max-width: 200px; max-height: 200px; display: block; margin-bottom: 5px;">`;
+                    content = `<img src="${e.target.result}" alt="${file.name}" style="max-width: 400px; max-height: 400px; display: block; margin-bottom: 5px;">`;
                 } else if (file.type === 'application/pdf') {
                     content = `<iframe src="${e.target.result}" style="width: 100%; height: 400px;" frameborder="0"></iframe>`;
                 } else {
@@ -368,7 +370,7 @@
                     <div class="d-flex align-items-center gap-2">
                         ${content}
                     </div>
-                    <i class="fa-regular fa-circle-xmark text-danger" style="cursor: pointer; font-size: 24px;" onclick="removeFile('${inputName}', ${index}, '${previewId}')"></i>
+                    <i class="fa-regular fa-circle-xmark text-danger" style="cursor: pointer; font-size: 24px;" onclick="removeNewFile('${inputName}', ${index}, '${previewId}')"></i>
                 `;
             };
 
@@ -377,7 +379,7 @@
         });
     }
 
-    function removeFile(inputName, index, previewId) {
+    function removeNewFile(inputName, index, previewId) {
         selectedFiles[inputName].splice(index, 1);
         updateFilePreview(inputName, previewId);
 
@@ -387,7 +389,7 @@
         fileInput.files = dataTransfer.files;
     }
 
-    function removeFile(element, fileName, inputHiddenId) {
+    function removeOldFile(element, fileName, inputHiddenId) {
         // Hapus file dari tampilan
         element.closest('.old-file').remove();
 

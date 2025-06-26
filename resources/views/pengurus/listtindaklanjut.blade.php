@@ -35,7 +35,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{{-- <script>
+<script>
     // Function untuk konfirmasi penghapusan data
     function confirmDelete(url) {
         Swal.fire({
@@ -55,19 +55,19 @@
     }
 
     // Function untuk live search
-    $(document).ready(function () {
-        $('#search').on('keyup', function () {
-            let query = $(this).val();
+    // $(document).ready(function () {
+    //     $('#search').on('keyup', function () {
+    //         let query = $(this).val();
 
-            $.ajax({
-                url: "{{ route('carikoperasi') }}",
-                type: "GET",
-                data: { search: query },
-                success: function (data) {
-                    $('#table-container').html(data);
-                }
-            });
-        });
-    });
-</script> --}}
+    //         $.ajax({
+    //             url: "{{ route('carikoperasi') }}",
+    //             type: "GET",
+    //             data: { search: query },
+    //             success: function (data) {
+    //                 $('#table-container').html(data);
+    //             }
+    //         });
+    //     });
+    // });
+</script>
 @endsection
