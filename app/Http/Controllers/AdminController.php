@@ -16,7 +16,7 @@ class AdminController extends Controller
 
     public function listakun()
     {
-        $users = User::paginate(10); // 10 data per halaman
+        $users = User::paginate(10);
         return view('admin.listakun', compact('users'));
     }
 

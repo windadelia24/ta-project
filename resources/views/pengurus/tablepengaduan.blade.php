@@ -27,7 +27,7 @@
                         <td class="text-center">{{ $index + 1 }}</td>
                         <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->isoFormat('D MMMM Y') }}</td>
                         @if(Auth::user()->role != 'pengurus')
-                            <td class="text-wrap" style="max-width: 200px;">
+                            <td class="text-wrap" style="max-width: 100px;">
                                 <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
                                     {{ $item->koperasi->nama_koperasi ?? 'Data Belum Tersedia' }}
                                 </div>

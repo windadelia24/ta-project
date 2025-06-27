@@ -10,10 +10,13 @@ use App\Models\SubAspekPemeriksaan;
 use App\Models\IndikatorPemeriksaan;
 use App\Models\Pengaduan;
 use App\Models\ResponPengaduan;
+use App\Models\TindakLanjut;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PengawasController extends Controller
 {
@@ -24,7 +27,9 @@ class PengawasController extends Controller
 
     public function listpemeriksaan()
     {
-        $periksa = Pemeriksaan::with(['koperasi', 'user'])->get();
+        $periksa = Pemeriksaan::with(['koperasi', 'user'])
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
         return view('pengawas.listperiksa', compact('periksa'));
     }
 
@@ -1006,60 +1011,83 @@ class PengawasController extends Controller
     public function generatefile(Request $request, $id_pemeriksaan)
     {
         Carbon::setLocale('id');
-        // Ambil data pemeriksaan beserta koperasi
+
         $pemeriksaan = Pemeriksaan::with('koperasi', 'aspekPemeriksaan.subAspek')->findOrFail($id_pemeriksaan);
 
-        // Ambil data inputan dari request
         $data = $request->all();
+        $pengurus = $request->pengurus;
 
-        $pengurus = $request->pengurus; // ini array inputan pengurus dari form
-
+        // Ambil masing-masing aspek
         $aspekTk = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Tata Kelola')->first();
         $aspekPr = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Profil Resiko')->first();
         $aspekKk = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Kinerja Keuangan')->first();
         $aspekPk = $pemeriksaan->aspekPemeriksaan->where('nama_aspek', 'Permodalan')->first();
 
-        $aspekProfilResikoId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
-            ->where('nama_aspek', 'Profil Resiko')
-            ->value('id_aspek');
+        // Sub aspek
+        $subAspekPr = SubAspekPemeriksaan::where('id_aspek', $aspekPr->id_aspek ?? 0)->get();
+        $subAspekKk = SubAspekPemeriksaan::where('id_aspek', $aspekKk->id_aspek ?? 0)->get();
+        $subAspekTk = SubAspekPemeriksaan::where('id_aspek', $aspekTk->id_aspek ?? 0)->get();
+        $subAspekPk = SubAspekPemeriksaan::where('id_aspek', $aspekPk->id_aspek ?? 0)->get();
 
-        $subAspekPr = [];
-        if ($aspekProfilResikoId) {
-            $subAspekPr = SubAspekPemeriksaan::where('id_aspek', $aspekProfilResikoId)->get();
+        // Render view ke PDF
+        $pdf = Pdf::loadView('pengawas.suratba', compact(
+            'pemeriksaan', 'data', 'pengurus',
+            'aspekTk', 'aspekPr', 'aspekKk', 'aspekPk',
+            'subAspekPr', 'subAspekKk', 'subAspekTk', 'subAspekPk'
+        ))->setPaper('a4', 'portrait');
+
+        $namaFile = $pemeriksaan->id_pemeriksaan . '_' . time() . '.pdf';
+        $folder = 'berita_acara';
+        $relativePath = $folder . '/' . $namaFile;
+        $fullPath = storage_path('app/public/' . $relativePath);
+
+        // Pastikan folder ada
+        if (!file_exists(dirname($fullPath))) {
+            mkdir(dirname($fullPath), 0777, true);
         }
 
-        // Ambil id aspek Kinerja Keuangan
-        $aspekKinerjaKeuanganId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
-            ->where('nama_aspek', 'Kinerja Keuangan')
-            ->value('id_aspek');
+        // Simpan PDF ke lokasi yang bisa diakses oleh browser
+        file_put_contents($fullPath, $pdf->output());
 
-        $subAspekKk = [];
-        if ($aspekKinerjaKeuanganId) {
-            $subAspekKk = SubAspekPemeriksaan::where('id_aspek', $aspekKinerjaKeuanganId)->get();
+        // Simpan path (yang bisa diakses oleh browser)
+        $pemeriksaan->file_ba = $relativePath;
+        $pemeriksaan->save();
+
+        return redirect()->route('listperiksa')->with('success', 'Berita acara berhasil dibuat dan disimpan.');
+    }
+
+    public function cariperiksa(Request $request)
+    {
+        $search = $request->get('search');
+
+        $periksa = Pemeriksaan::with(['koperasi', 'user'])
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->whereHas('koperasi', function ($koperasiQuery) use ($search) {
+                        $koperasiQuery->where('nama_koperasi', 'like', '%' . $search . '%')
+                                    ->orWhere('kabupaten', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', '%' . $search . '%');
+                    })
+                    ->orWhere('skor_akhir', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        // Untuk AJAX request, return partial view
+        if ($request->ajax()) {
+            $html = view('pengawas.tableperiksa', compact('periksa'))->render();
+            $pagination = $periksa->appends($request->all())->links('layout.pagination')->render();
+
+            return response()->json([
+                'html' => $html,
+                'pagination' => $pagination
+            ]);
         }
 
-        // Ambil id aspek Tata Kelola
-        $aspekTataKelolaId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
-            ->where('nama_aspek', 'Tata Kelola')
-            ->value('id_aspek');
-
-        $subAspekTk = [];
-        if ($aspekTataKelolaId) {
-            $subAspekTk = SubAspekPemeriksaan::where('id_aspek', $aspekTataKelolaId)->get();
-        }
-
-        // Ambil id aspek Permodalan
-        $aspekPermodalanId = AspekPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
-            ->where('nama_aspek', 'Permodalan')
-            ->value('id_aspek');
-
-        $subAspekPk = [];
-        if ($aspekPermodalanId) {
-            $subAspekPk = SubAspekPemeriksaan::where('id_aspek', $aspekPermodalanId)->get();
-        }
-
-        return view('pengawas.suratba', compact('pemeriksaan', 'data', 'pengurus', 'aspekTk', 'aspekPr', 'aspekKk', 'aspekPk'
-        , 'subAspekPr', 'subAspekKk', 'subAspekTk', 'subAspekPk'));
+        return view('pengawas.listperiksa', compact('periksa'));
     }
 
     public function inputrespon(Request $request)
@@ -1117,5 +1145,11 @@ class PengawasController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Respon berhasil dihapus.');
+    }
+
+    public function respontindaklanjut($id_tindaklanjut)
+    {
+        $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        return view('pengawas.respontindaklanjut', compact('tindaklanjut'));
     }
 }

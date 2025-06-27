@@ -27,12 +27,18 @@
                             <a href="{{ route('lihatperiksa', $item->id_pemeriksaan) }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('editperiksa', $item->id_pemeriksaan) }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{{ route('fileperiksa', $item->id_pemeriksaan) }}" class="btn btn-success btn-sm">
-                                <i class="fas fa-file"></i>
-                            </a>
+                            @if (Auth::check() && Auth::user()->role === 'pengawas')
+                                <a href="{{ route('editperiksa', $item->id_pemeriksaan) }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ route('fileperiksa', $item->id_pemeriksaan) }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-file"></i>
+                                </a>
+                            @endif
+                            @if (!empty($item->file_ba))
+                                <a href="{{ asset('storage/' . $item->file_ba) }}" class="btn btn-info btn-sm" download>
+                                    <i class="fas fa-download"></i></a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

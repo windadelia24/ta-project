@@ -979,4 +979,7 @@
             </h5>
     </div>
 </div>
+    <div class="d-flex justify-content-end">
+        <a href="{{ url()->previous() }}" class="btn btn-secondary px-4">Kembali</a>
+    </div>
 @endsection

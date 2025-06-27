@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4;
-            margin: 2cm 1.5cm;
+            margin: 2cm 2cm 2.25cm 2.54cm;
         }
 
         body {
@@ -128,6 +128,7 @@
             width: 45%;
             text-align: center;
             min-height: 400px;
+
         }
 
         .signature-box h4 {
@@ -221,17 +222,24 @@
 
 
         <div class="pengurus-list">
-            <ol>
-                @foreach ($pengurus as $item)
-                    <li>
-                        <div class="nama-hp">
-                            <span class="nama-part">Nama : {{ $item['nama'] }}</span>
-                            <span class="hp-part">No. HP. {{ $item['hp'] }}</span>
-                        </div>
-                        Jabatan : {{ $item['jabatan'] }}
-                    </li>
+            <table style="width: 100%; border-collapse: collapse;">
+                @foreach ($pengurus as $index => $item)
+                    <tr>
+                        <td style="vertical-align: top; width: 30px;">{{ $index + 1 }}.</td>
+                        <td style="width: 100%;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 60%;">Nama : {{ $item['nama'] }}</td>
+                                    <td style="width: 40%; text-align: right;">No. HP. {{ $item['hp'] }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Jabatan : {{ $item['jabatan'] }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
                 @endforeach
-            </ol>
+            </table>
         </div>
 
         <p>Dengan hasil temuan pemeriksaan sebagai berikut :</p>
@@ -456,40 +464,40 @@
         </p>
     </div>
 
-    <div class="signature-section">
-        <div class="signature-box">
-            <h4>Yang diperiksa :</h4>
-            <p class="bold">{{ $koperasi->nama_koperasi ?? 'Koperasi KPN SMAN 1 Tilatang Kamang' }}</p>
-            <div class="signature-space"></div>
-            <div class="signature-item">
-                <p>1. {{ isset($pengurus[0]) ? $pengurus[0]['nama'] : '.....................................' }}</p>
-                <p>{{ isset($pengurus[0]) ? $pengurus[0]['jabatan'] : '.....................................' }}</p>
-            </div>
-            <div class="signature-item">
-                @if (!empty($pengurus[1]))
-                    <p>2. {{ $pengurus[1]['nama'] }}</p>
-                    <p>{{ $pengurus[1]['jabatan'] }}</p>
-                @else
-                    <p>2. .....................................</p>
-                    <p>&nbsp;</p>
-                @endif
-            </div>
-        </div>
-        <div class="signature-box">
-            <h4>Tim Pengawas Koperasi</h4>
-            <p class="bold">Provinsi Sumatera Barat</p>
-            <div class="signature-space"></div>
+    <table style="width: 100%; margin-top: 40px;">
+        <tr>
+            <td style="width: 50%; text-align: center; vertical-align: top;">
+                <h4>Yang diperiksa :</h4>
+                <p class="bold">{{ $koperasi->nama_koperasi ?? 'Koperasi KPN SMAN 1 Tilatang Kamang' }}</p>
+                <div style="height: 80px;"></div>
+                <div>
+                    <p>1. {{ $pengurus[0]['nama'] ?? '.....................................' }}</p>
+                    <p>{{ $pengurus[0]['jabatan'] ?? '.....................................' }}</p>
+                </div>
+                <div style="margin-top: 80px;">
+                    @if (!empty($pengurus[1]))
+                        <p>2. {{ $pengurus[1]['nama'] }}</p>
+                        <p>{{ $pengurus[1]['jabatan'] }}</p>
+                    @else
+                        <p>2. .....................................</p>
+                        <p>&nbsp;</p>
+                    @endif
+                </div>
+            </td>
 
-            <div class="signature-name">
-                <p>1. <span class="underline">{{ $data['pengawas1_nama'] ?? 'Nama Pengawas 1' }}</span></p>
+            <td style="width: 50%; text-align: center; vertical-align: top;">
+                <h4>Tim Pengawas Koperasi</h4>
+                <p class="bold">Provinsi Sumatera Barat</p>
+                <div style="height: 80px;"></div>
+                <p>1. <span style="text-decoration: underline;">{{ $data['pengawas1_nama'] ?? 'Nama Pengawas 1' }}</span></p>
                 <p>NIP. {{ $data['pengawas1_nip'] ?? '-' }}</p>
-            </div>
 
-            <div class="signature-name">
-                <p>2. <span class="underline">{{ $data['pengawas2_nama'] ?? 'Nama Pengawas 2' }}</span></p>
-                <p>NIP. {{ $data['pengawas2_nip'] ?? '-' }}</p>
-            </div>
-        </div>
-    </div>
+                <div style="margin-top: 80px;">
+                    <p>2. <span style="text-decoration: underline;">{{ $data['pengawas2_nama'] ?? 'Nama Pengawas 2' }}</span></p>
+                    <p>NIP. {{ $data['pengawas2_nip'] ?? '-' }}</p>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

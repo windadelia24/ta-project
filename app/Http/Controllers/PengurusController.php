@@ -26,17 +26,20 @@ class PengurusController extends Controller
         ]);
     }
 
-   public function listtindaklanjut()
+    public function listtindaklanjut()
     {
         $user = Auth::user();
 
-        // Ambil koperasi dari relasi pengurus
-        $koperasi = $user->pengurus?->koperasi;
+        if ($user->role === 'pengurus') {
+            $koperasi = $user->pengurus?->koperasi;
 
-        // Jika koperasi ditemukan, ambil semua pemeriksaan milik koperasi
-        $periksa = $koperasi
-            ? $koperasi->pemeriksaan()->with(['koperasi', 'user', 'tindakLanjut'])->get()
-            : collect(); // kosongkan jika koperasi tidak ada
+            $periksa = $koperasi
+                ? $koperasi->pemeriksaan()->with(['koperasi', 'user', 'tindakLanjut'])->get()
+                : collect();
+        } else {
+            // Role selain pengurus bisa melihat semua pemeriksaan
+            $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])->get();
+        }
 
         return view('pengurus.listtindaklanjut', compact('periksa'));
     }
@@ -134,6 +137,12 @@ class PengurusController extends Controller
         }
 
         return $paths;
+    }
+
+    public function lihattindaklanjut($id_tindaklanjut)
+    {
+        $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        return view('pengurus.lihattindaklanjut', compact('tindaklanjut'));
     }
 
     public function edittindaklanjut($id_tindaklanjut)
