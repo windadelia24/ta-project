@@ -22,26 +22,67 @@
 
         {{-- Prinsip Koperasi --}}
         <div class="mb-3">
-            <label class="form-label fw-bold">1. Prinsip Koperasi</label>
-            <textarea class="form-control" name="prinsip_koperasi" rows="3" required>{{ old('prinsip_koperasi', $tindaklanjut->prinsip_koperasi) }}</textarea>
+            <label class="form-label fw-bold">
+                1. Prinsip Koperasi
+                @if(isset($statusAspekTl['prinsip_koperasi']) && $statusAspekTl['prinsip_koperasi'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+
+            <textarea
+                class="form-control"
+                name="prinsip_koperasi"
+                rows="3"
+                {{ isset($statusAspekTl['prinsip_koperasi']) && $statusAspekTl['prinsip_koperasi'] ? 'readonly' : 'required' }}
+            >{{ old('prinsip_koperasi', $tindaklanjut->prinsip_koperasi) }}</textarea>
         </div>
 
         {{-- Kelembagaan --}}
         <div class="mb-3">
-            <label class="form-label fw-bold">2. Kelembagaan</label>
-            <textarea class="form-control" name="kelembagaan" rows="3" required>{{ old('kelembagaan', $tindaklanjut->kelembagaan) }}</textarea>
+            <label class="form-label fw-bold">
+                2. Kelembagaan
+                @if(isset($statusAspekTl['kelembagaan']) && $statusAspekTl['kelembagaan'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="kelembagaan"
+                rows="3"
+                {{ isset($statusAspekTl['kelembagaan']) && $statusAspekTl['kelembagaan'] ? 'readonly' : 'required' }}
+            >{{ old('kelembagaan', $tindaklanjut->kelembagaan) }}</textarea>
         </div>
 
         {{-- Manajemen Koperasi --}}
         <div class="mb-3">
-            <label class="form-label fw-bold">3. Manajemen Koperasi</label>
-            <textarea class="form-control" name="manajemen_koperasi" rows="3" required>{{ old('manajemen_koperasi', $tindaklanjut->manajemen_koperasi) }}</textarea>
+            <label class="form-label fw-bold">
+                3. Manajemen Koperasi
+                @if(isset($statusAspekTl['manajemen_koperasi']) && $statusAspekTl['manajemen_koperasi'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="manajemen_koperasi"
+                rows="3"
+                {{ isset($statusAspekTl['manajemen_koperasi']) && $statusAspekTl['manajemen_koperasi'] ? 'readonly' : 'required' }}
+            >{{ old('manajemen_koperasi', $tindaklanjut->manajemen_koperasi) }}</textarea>
         </div>
 
         {{-- Prinsip Syariah --}}
         <div class="mb-3">
-            <label class="form-label fw-bold">4. Prinsip Syariah (Opsional)</label>
-            <textarea class="form-control" name="prinsip_syariah" rows="3">{{ old('prinsip_syariah', $tindaklanjut->prinsip_syariah) }}</textarea>
+            <label class="form-label fw-bold">
+                4. Prinsip Syariah (Opsional)
+                @if(isset($statusAspekTl['prinsip_syariah']) && $statusAspekTl['prinsip_syariah'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="prinsip_syariah"
+                rows="3"
+                {{ isset($statusAspekTl['prinsip_syariah']) && $statusAspekTl['prinsip_syariah'] ? 'readonly' : '' }}
+            >{{ old('prinsip_syariah', $tindaklanjut->prinsip_syariah) }}</textarea>
         </div>
 
         {{-- File Upload --}}
@@ -90,14 +131,34 @@
 
         {{-- Risiko Inheren --}}
         <div class="mb-3">
-            <label class="form-label fw-bold">1. Risiko Inheren</label>
-            <textarea class="form-control" name="risiko_inheren" rows="3" required>{{ old('risiko_inheren', $tindaklanjut->risiko_inheren) }}</textarea>
+            <label class="form-label fw-bold">
+                1. Risiko Inheren
+                @if(isset($statusAspekTl['risiko_inheren']) && $statusAspekTl['risiko_inheren'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="risiko_inheren"
+                rows="3"
+                {{ isset($statusAspekTl['risiko_inheren']) && $statusAspekTl['risiko_inheren'] ? 'readonly' : 'required' }}
+            >{{ old('risiko_inheren', $tindaklanjut->risiko_inheren) }}</textarea>
         </div>
 
         {{-- KPMR --}}
         <div class="mb-3">
-            <label class="form-label fw-bold">2. KPMR</label>
-            <textarea class="form-control" name="kpmr" rows="3" required>{{ old('kpmr', $tindaklanjut->kpmr) }}</textarea>
+            <label class="form-label fw-bold">
+                2. KPMR
+                @if(isset($statusAspekTl['kpmr']) && $statusAspekTl['kpmr'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="kpmr"
+                rows="3"
+                {{ isset($statusAspekTl['kpmr']) && $statusAspekTl['kpmr'] ? 'readonly' : 'required' }}
+            >{{ old('kpmr', $tindaklanjut->kpmr) }}</textarea>
         </div>
 
         {{-- File Upload --}}
@@ -145,8 +206,18 @@
         <h4 class="fw-bold mt-4">C. Aspek Kinerja Keuangan</h4>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Kinerja Keuangan</label>
-            <textarea class="form-control" name="kinerja_keuangan" rows="3" required>{{ old('kinerja_keuangan', $tindaklanjut->kinerja_keuangan) }}</textarea>
+            <label class="form-label fw-bold">
+                Kinerja Keuangan
+                @if(isset($statusAspekTl['kinerja_keuangan']) && $statusAspekTl['kinerja_keuangan'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="kinerja_keuangan"
+                rows="3"
+                {{ isset($statusAspekTl['kinerja_keuangan']) && $statusAspekTl['kinerja_keuangan'] ? 'readonly' : 'required' }}
+            >{{ old('kinerja_keuangan', $tindaklanjut->kinerja_keuangan) }}</textarea>
         </div>
 
         <div class="mb-3">
@@ -193,8 +264,18 @@
         <h4 class="fw-bold mt-4">D. Aspek Permodalan</h4>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Permodalan</label>
-            <textarea class="form-control" name="permodalan" rows="3" required>{{ old('permodalan', $tindaklanjut->permodalan) }}</textarea>
+            <label class="form-label fw-bold">
+                Permodalan
+                @if(isset($statusAspekTl['permodalan']) && $statusAspekTl['permodalan'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="permodalan"
+                rows="3"
+                {{ isset($statusAspekTl['permodalan']) && $statusAspekTl['permodalan'] ? 'readonly' : 'required' }}
+            >{{ old('permodalan', $tindaklanjut->permodalan) }}</textarea>
         </div>
 
         <div class="mb-3">
@@ -241,8 +322,18 @@
         <h4 class="fw-bold mt-4">E. Aspek Temuan Lainnya</h4>
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Temuan Lainnya</label>
-            <textarea class="form-control" name="temuan_lainnya" rows="3">{{ old('temuan_lainnya', $tindaklanjut->temuan_lainnya) }}</textarea>
+            <label class="form-label fw-bold">
+                Temuan Lainnya
+                @if(isset($statusAspekTl['temuan_lainnya']) && $statusAspekTl['temuan_lainnya'])
+                    <span class="badge bg-primary">Selesai</span>
+                @endif
+            </label>
+            <textarea
+                class="form-control"
+                name="temuan_lainnya"
+                rows="3"
+                {{ isset($statusAspekTl['temuan_lainnya']) && $statusAspekTl['temuan_lainnya'] ? 'readonly' : '' }}
+            >{{ old('temuan_lainnya', $tindaklanjut->temuan_lainnya) }}</textarea>
         </div>
 
         <div class="mb-3">

@@ -34,13 +34,13 @@ class PengurusController extends Controller
             $koperasi = $user->pengurus?->koperasi;
 
             $periksa = $koperasi
-                ? $koperasi->pemeriksaan()->with(['koperasi', 'user', 'tindakLanjut'])->get()
+                ? $koperasi->pemeriksaan()->with(['koperasi', 'user', 'tindakLanjut'])->paginate(10)
                 : collect();
         } else {
-            // Role selain pengurus bisa melihat semua pemeriksaan
-            $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])->get();
+            $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])->paginate(10);
         }
 
+        Carbon::setLocale('id');
         return view('pengurus.listtindaklanjut', compact('periksa'));
     }
 
@@ -148,7 +148,8 @@ class PengurusController extends Controller
     public function edittindaklanjut($id_tindaklanjut)
     {
         $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
-        return view('pengurus.edittindaklanjut', compact('tindaklanjut'));
+        $statusAspekTl = json_decode($tindaklanjut->status_aspektl, true);
+        return view('pengurus.edittindaklanjut', compact('tindaklanjut', 'statusAspekTl'));
     }
 
     public function updatetindaklanjut(Request $request, $id_tindaklanjut)
@@ -419,5 +420,103 @@ class PengurusController extends Controller
             ]);
         }
         return view('pengurus.listpengaduan', compact('pengaduan'));
+    }
+
+    public function caritindaklanjut(Request $request)
+    {
+        $search = $request->get('search');
+        $user = Auth::user();
+
+        if ($user->role === 'pengurus') {
+            // Pencarian untuk pengurus berdasarkan koperasi
+            $koperasi = $user->pengurus?->koperasi;
+            if ($koperasi) {
+                $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])
+                ->whereHas('koperasi', function ($q) use ($koperasi) {
+                    $q->where('nik', $koperasi->nik); // 🔐 Filter berdasarkan koperasi milik pengurus
+                })
+                ->where(function ($query) use ($search) {
+                    $query->whereHas('tindakLanjut', function($q) use ($search) {
+                        $q->where('created_at', 'like', '%' . $search . '%');
+
+                        if ($search) {
+                            $bulanMap = [
+                                'januari' => '01', 'februari' => '02', 'maret' => '03',
+                                'april' => '04', 'mei' => '05', 'juni' => '06',
+                                'juli' => '07', 'agustus' => '08', 'september' => '09',
+                                'oktober' => '10', 'november' => '11', 'desember' => '12'
+                            ];
+
+                            $searchLower = strtolower($search);
+                            foreach ($bulanMap as $namaBulan => $nomorBulan) {
+                                if (strpos($namaBulan, $searchLower) !== false) {
+                                    $q->orWhere('created_at', 'like', '%-' . $nomorBulan . '-%');
+                                }
+                            }
+                        }
+                    })
+                    ->orWhereHas('user', function($q) use ($search) {
+                        $q->where('name', 'like', '%' . $search . '%');
+                    });
+                })
+                ->paginate(10);
+            } else {
+                $periksa = collect()->paginate(10);
+            }
+        } else {
+            // Pencarian untuk pengawas (semua data pemeriksaan)
+            $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])
+                ->whereHas('tindakLanjut', function($query) use ($search) {
+                    $query->where('created_at', 'like', '%' . $search . '%');
+
+                    // Tambahan: Cari berdasarkan nama bulan Indonesia
+                    if ($search) {
+                        $bulanMap = [
+                            'januari' => '01', 'februari' => '02', 'maret' => '03',
+                            'april' => '04', 'mei' => '05', 'juni' => '06',
+                            'juli' => '07', 'agustus' => '08', 'september' => '09',
+                            'oktober' => '10', 'november' => '11', 'desember' => '12'
+                        ];
+
+                        $searchLower = strtolower($search);
+                        foreach ($bulanMap as $namaBulan => $nomorBulan) {
+                            if (strpos($namaBulan, $searchLower) !== false) {
+                                $query->orWhere('created_at', 'like', '%-' . $nomorBulan . '-%');
+                            }
+                        }
+                    }
+                })
+                ->orWhereHas('koperasi', function($q) use ($search) {
+                    $q->where('nama_koperasi', 'like', '%' . $search . '%')
+                    ->orWhere('kabupaten', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('user', function($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                })
+                ->paginate(10);
+        }
+
+        Carbon::setLocale('id');
+
+        // Format tanggal setelah query selesai
+        $periksa->getCollection()->transform(function ($item) {
+            if ($item->tindakLanjut) {
+                $item->tindakLanjut->tanggal_formatted = Carbon::parse($item->tindakLanjut->created_at)->isoFormat('D MMMM Y');
+            }
+            return $item;
+        });
+
+        // Untuk AJAX request, return partial view
+        if ($request->ajax()) {
+            $html = view('pengurus.tabletindaklanjut', compact('periksa'))->render();
+            $pagination = $periksa->appends(request()->query())->links('layout.pagination')->render();
+
+            return response()->json([
+                'html' => $html,
+                'pagination' => $pagination
+            ]);
+        }
+
+        return view('pengurus.listtindaklanjut', compact('periksa'));
     }
 }

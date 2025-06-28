@@ -4,8 +4,12 @@
 <div class="container">
     <h1 class="mb-3" style="font-weight: bold; font-size: 36px;">Detail Tindak Lanjut</h1>
 
-    <form action="{{ route('storerespontl', $tindaklanjut->id_tindaklanjut) }}" method="POST">
-        @csrf
+    {{-- Info Pemeriksa --}}
+    @if($tindaklanjut->nama_responder)
+    <div class="alert alert-info mb-4">
+        <strong>Diperiksa oleh:</strong> {{ $tindaklanjut->nama_responder }}
+    </div>
+    @endif
 
     {{-- A. Aspek Tata Kelola --}}
     <h4 class="fw-bold mt-4">A. Aspek Tata Kelola</h4>
@@ -17,15 +21,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_prinsip_koperasi" name="status[prinsip_koperasi]"
+                <input class="form-check-input" type="checkbox" id="check_prinsip_koperasi"
                 {{ isset($statusAspekTl['prinsip_koperasi']) && $statusAspekTl['prinsip_koperasi'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_prinsip_koperasi">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- Kelembagaan --}}
@@ -35,15 +37,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_kelembagaan" name="status[kelembagaan]"
+                <input class="form-check-input" type="checkbox" id="check_kelembagaan"
                 {{ isset($statusAspekTl['kelembagaan']) && $statusAspekTl['kelembagaan'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_kelembagaan">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- Manajemen Koperasi --}}
@@ -53,15 +53,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_manajemen_koperasi" name="status[manajemen_koperasi]"
+                <input class="form-check-input" type="checkbox" id="check_manajemen_koperasi"
                 {{ isset($statusAspekTl['manajemen_koperasi']) && $statusAspekTl['manajemen_koperasi'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_manajemen_koperasi">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- Prinsip Syariah --}}
@@ -71,15 +69,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_prinsip_syariah" name="status[prinsip_syariah]"
+                <input class="form-check-input" type="checkbox" id="check_prinsip_syariah"
                 {{ isset($statusAspekTl['prinsip_syariah']) && $statusAspekTl['prinsip_syariah'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_prinsip_syariah">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- File Display --}}
@@ -123,15 +119,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_risiko_inheren" name="status[risiko_inheren]"
+                <input class="form-check-input" type="checkbox" id="check_risiko_inheren"
                 {{ isset($statusAspekTl['risiko_inheren']) && $statusAspekTl['risiko_inheren'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_risiko_inheren">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- KPMR --}}
@@ -141,15 +135,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_kpmr" name="status[kpmr]"
+                <input class="form-check-input" type="checkbox" id="check_kpmr"
                 {{ isset($statusAspekTl['kpmr']) && $statusAspekTl['kpmr'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_kpmr">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- File Display --}}
@@ -192,15 +184,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_kinerja_keuangan" name="status[kinerja_keuangan]"
+                <input class="form-check-input" type="checkbox" id="check_kinerja_keuangan"
                 {{ isset($statusAspekTl['kinerja_keuangan']) && $statusAspekTl['kinerja_keuangan'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_kinerja_keuangan">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     <div class="mb-3">
@@ -242,15 +232,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_permodalan" name="status[permodalan]"
+                <input class="form-check-input" type="checkbox" id="check_permodalan"
                 {{ isset($statusAspekTl['permodalan']) && $statusAspekTl['permodalan'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_permodalan">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     <div class="mb-3">
@@ -292,15 +280,13 @@
 
         <div class="mt-3">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="check_temuan_lainnya" name="status[temuan_lainnya]"
+                <input class="form-check-input" type="checkbox" id="check_temuan_lainnya"
                 {{ isset($statusAspekTl['temuan_lainnya']) && $statusAspekTl['temuan_lainnya'] ? 'checked' : '' }}>
                 <label class="form-check-label fw-bold text-success" for="check_temuan_lainnya">
                     Tindak Lanjut Selesai
                 </label>
             </div>
         </div>
-
-
     </div>
 
     <div class="mb-3">
@@ -336,15 +322,12 @@
     {{-- Respon Tindak Lanjut Global --}}
     <div class="mb-4 mt-4">
         <h5 class="fw-bold">Respon Tindak Lanjut</h5>
-        <textarea class="form-control" name="respon_tindak_lanjut" rows="5" placeholder="Masukkan respon atau keterangan tindak lanjut secara keseluruhan">{{ $tindaklanjut->respon_tl ?? '' }}</textarea>
+        <div class="form-control" style="min-height: 120px; background-color: #f8f9fa;">{{ $tindaklanjut->respon_tl ?? 'Belum ada respon' }}</div>
     </div>
 
     <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary px-4 me-2">Simpan Respon</button>
         <a href="{{ url()->previous() }}" class="btn btn-secondary px-4">Kembali</a>
     </div>
-
-    </form>
 </div>
 
 @endsection

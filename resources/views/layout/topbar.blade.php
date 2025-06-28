@@ -4,7 +4,11 @@
     </button>
     <div class="user-info relative dropdown">
         <span>{{ Auth::user()->email }}</span>
-        <img src="{{ asset('profil.png') }}" alt="User" class="user-pic cursor-pointer hover:opacity-80 transition dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" />
+        <img src="{{ Auth::user()->user_picture ? asset('storage/user_picture/' . Auth::user()->user_picture) : asset('profil.png') }}"
+        alt="User"
+        class="user-pic cursor-pointer hover:opacity-80 transition dropdown-toggle"
+        data-bs-toggle="dropdown"
+        aria-expanded="false" />
         <!-- Dropdown Menu -->
         <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="{{ route('profile') }}">Profile</a></li>

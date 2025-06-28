@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class SesiController extends Controller
 {
@@ -99,7 +100,70 @@ class SesiController extends Controller
     }
 
     function profile(){
-        $user = Auth::user();
+        $user = User::where('nik_nip', Auth::user()->nik_nip)->first();
         return view('profile', compact('user'));
+    }
+
+    public function updateprofile(Request $request)
+    {
+        $user = User::where('nik_nip', Auth::user()->nik_nip)->first();
+
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'nip' => 'required|string|max:255',
+            'no_telp' => 'nullable|string|max:20',
+            'jabatan' => 'nullable|string|max:255',
+            'current_password' => 'nullable|string',
+            'new_password' => 'nullable|string|min:8',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        // Cek jika ada password yang mau diubah
+        if ($request->filled('current_password') || $request->filled('new_password')) {
+            // Jika salah satu password field diisi, maka keduanya harus diisi
+            if (!$request->filled('current_password') || !$request->filled('new_password')) {
+                return redirect()->route('profile')->with('error', 'Untuk mengubah password, mohon isi password lama dan password baru.');
+            }
+
+            // Cek apakah password lama sesuai
+            if (!Hash::check($request->current_password, (string) $user->password)) {
+                return redirect()->route('profile')->with('error', 'Password lama tidak sesuai.');
+            }
+
+            // Update password
+            $user->password = Hash::make($request->new_password);
+        }
+
+        // Handle upload foto
+        if ($request->hasFile('photo')) {
+            $folder = 'user_picture';
+            $destinationPath = storage_path('app/public/' . $folder);
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            // Hapus foto lama jika ada
+            if ($user->user_picture && Storage::exists('public/' . $folder . '/' . $user->user_picture)) {
+                Storage::delete('public/' . $folder . '/' . $user->user_picture);
+            }
+
+            // Upload foto baru
+            $file = $request->file('photo');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs($folder, $filename, 'public');
+
+            $user->user_picture = $filename;
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->no_telp = $request->no_telp;
+        $user->jabatan = $request->jabatan;
+
+        $user->save();
+
+        return redirect()->route('profile')->with('success', 'Profile berhasil diperbarui.');
     }
 }

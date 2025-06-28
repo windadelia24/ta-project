@@ -30,6 +30,7 @@ class PengawasController extends Controller
         $periksa = Pemeriksaan::with(['koperasi', 'user'])
         ->orderBy('created_at', 'desc')
         ->paginate(10);
+        Carbon::setLocale('id');
         return view('pengawas.listperiksa', compact('periksa'));
     }
 
@@ -542,6 +543,8 @@ class PengawasController extends Controller
             : ($nilaiKewajibanPanjangEkuitas <= 1.5 ? 3 : 4));
         $kewajibanPanjangEkuitasFinal = [1 => 4, 2 => 3, 3 => 2, 4 => 1][$skorAwalKewajibanPanjangEkuitas] ?? 0;
         $skorPermodalan['Kewajiban Jangka Panjang terhadap Ekuitas'] = $kewajibanPanjangEkuitasFinal;
+
+        Carbon::setLocale('id');
 
         return view('pengawas.lihatperiksa', compact('pemeriksaan', 'subAspekTataKelola',
         'subAspekProfilResiko','subAspekKinerjaKeuangan','skorKeuangan','subAspekPermodalan','skorPermodalan',
@@ -1064,17 +1067,44 @@ class PengawasController extends Controller
             ->when($search, function ($query, $search) {
                 return $query->where(function ($q) use ($search) {
                     $q->whereHas('koperasi', function ($koperasiQuery) use ($search) {
-                        $koperasiQuery->where('nama_koperasi', 'like', '%' . $search . '%')
-                                    ->orWhere('kabupaten', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhere('skor_akhir', 'like', '%' . $search . '%');
+                            $koperasiQuery->where('nama_koperasi', 'like', '%' . $search . '%')
+                                ->orWhere('kabupaten', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('name', 'like', '%' . $search . '%');
+                        })
+                        ->orWhere('skor_akhir', 'like', '%' . $search . '%')
+                        ->orWhere('tanggal_periksa', 'like', '%' . $search . '%');
+
+                    // Tambahan: cari berdasarkan nama bulan Indonesia
+                    if ($search) {
+                        $bulanMap = [
+                            'januari' => '01', 'februari' => '02', 'maret' => '03',
+                            'april' => '04', 'mei' => '05', 'juni' => '06',
+                            'juli' => '07', 'agustus' => '08', 'september' => '09',
+                            'oktober' => '10', 'november' => '11', 'desember' => '12'
+                        ];
+
+                        $searchLower = strtolower($search);
+                        foreach ($bulanMap as $namaBulan => $nomorBulan) {
+                            if (strpos($namaBulan, $searchLower) !== false) {
+                                $q->orWhere('tanggal_periksa', 'like', '%-' . $nomorBulan . '-%');
+                            }
+                        }
+                    }
                 });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+
+        Carbon::setLocale('id');
+
+        $periksa->getCollection()->transform(function ($item) {
+            if ($item->tanggal_periksa) {
+                $item->tanggal_periksa_formatted = Carbon::parse($item->tanggal_periksa)->isoFormat('D MMMM Y');
+            }
+            return $item;
+        });
 
         // Untuk AJAX request, return partial view
         if ($request->ajax()) {
@@ -1150,6 +1180,44 @@ class PengawasController extends Controller
     public function respontindaklanjut($id_tindaklanjut)
     {
         $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
-        return view('pengawas.respontindaklanjut', compact('tindaklanjut'));
+        $statusAspekTl = json_decode($tindaklanjut->status_aspektl, true);
+        return view('pengawas.respontindaklanjut', compact('tindaklanjut', 'statusAspekTl'));
+    }
+
+    public function storerespontl(Request $request, $id_tindaklanjut)
+    {
+        $aspekList = [
+            'prinsip_koperasi',
+            'kelembagaan',
+            'manajemen_koperasi',
+            'prinsip_syariah',
+            'risiko_inheren',
+            'kpmr',
+            'kinerja_keuangan',
+            'permodalan',
+            'temuan_lainnya',
+        ];
+
+        $status = [];
+        foreach ($aspekList as $aspek) {
+            $status[$aspek] = $request->has("status.$aspek");
+        }
+
+        $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        $tindaklanjut->status_aspektl = json_encode($status);
+        $tindaklanjut->respon_tl = $request->input('respon_tindak_lanjut');
+        $tindaklanjut->nama_responder = Auth::user()->name;
+        $tindaklanjut->status_tindaklanjut = 'Direspon';
+
+        $tindaklanjut->save();
+
+        return redirect()->route('listtindaklanjut')->with('success', 'Respon tindak lanjut berhasil disimpan.');
+    }
+
+    public function lihatrespontl($id_tindaklanjut)
+    {
+        $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        $statusAspekTl = json_decode($tindaklanjut->status_aspektl, true);
+        return view('pengawas.lihatrespontl', compact('tindaklanjut', 'statusAspekTl'));
     }
 }

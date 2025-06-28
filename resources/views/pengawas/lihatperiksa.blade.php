@@ -2,6 +2,10 @@
 
 @section('content')
 <div class="container">
+    <div class="alert alert-info mb-4">
+        <p class="mb-1"><strong>Diperiksa oleh:</strong> {{ $pemeriksaan->user->name }}</p>
+        <p class="mb-0"><strong>Tanggal Pemeriksaan:</strong> {{ \Carbon\Carbon::parse($pemeriksaan->tanggal_periksa)->isoFormat('D MMMM Y') }}</p>
+    </div>
     <h1 id="title" class="mb-3" style="font-weight: bold; font-size: 25px;">Koperasi</h1>
 
     <div id="step1">

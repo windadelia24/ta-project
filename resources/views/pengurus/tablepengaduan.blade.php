@@ -24,7 +24,7 @@
                     $respon = $item->responPengaduan->first();
                 @endphp
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td class="text-center">{{ ($pengaduan->currentPage() - 1) * $pengaduan->perPage() + $index + 1 }}</td>
                         <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->isoFormat('D MMMM Y') }}</td>
                         @if(Auth::user()->role != 'pengurus')
                             <td class="text-wrap" style="max-width: 100px;">
@@ -187,6 +187,7 @@
 
                                 @if($respon)
                                     <p><strong>Nama Responder:</strong> {{ $respon->nama_responder }}</p>
+                                    <p><strong>Tanggal Respon:</strong> {{ \Carbon\Carbon::parse($respon->created_at)->isoFormat('D MMMM Y') }}</p>
                                     <p><strong>Respon:</strong> {{ $respon->respon }}</p>
                                 @else
                                     <p>Respon tidak ditemukan.</p>

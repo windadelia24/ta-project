@@ -3,6 +3,7 @@
         <thead class="table-success text-center">
             <tr>
                 <th>No.</th>
+                <th>Tanggal Pemeriksaan</th>
                 <th>Nama Koperasi</th>
                 <th>Kota/Kabupaten</th>
                 <th>Nama Pengawas</th>
@@ -18,8 +19,13 @@
             @else
                 @foreach($periksa as $index => $item)
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td>{{ $item->koperasi->nama_koperasi ?? '-' }}</td>
+                        <td class="text-center">{{ ($periksa->currentPage() - 1) * $periksa->perPage() + $index + 1 }}</td>
+                        <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_periksa)->isoFormat('D MMMM Y') }}</td>
+                        <td class="text-wrap" style="max-width: 200px;">
+                            <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
+                                {{ $item->koperasi->nama_koperasi ?? 'Data Belum Tersedia' }}
+                            </div>
+                        </td>
                         <td>{{ $item->koperasi->kabupaten ?? '-' }}</td>
                         <td>{{ $item->user->name ?? '-' }}</td>
                         <td>{{ $item->skor_akhir ?? '-' }}</td>

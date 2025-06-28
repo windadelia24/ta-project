@@ -35,6 +35,7 @@ Route::get('/home', function () {
 Route::middleware(['auth'])->group(function () {
     //profile
     Route::get('/profile', [SesiController::class,'profile'])->name('profile');
+    Route::post('/profile', [SesiController::class,'updateprofile'])->name('updateprofile');
     //admin
     Route::get('/admin', [AdminController::class,'index'])->middleware('userAkses:admin')->name('admin');
     Route::get('/akun', [AdminController::class, 'listakun'])->middleware('userAkses:admin')->name('listakun');
@@ -60,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tindaklanjut/edit/{id_tindaklanjut}', [PengurusController::class, 'edittindaklanjut'])->middleware('userAkses:pengurus')->name('edittindaklanjut');
     Route::post('/tindaklanjut/edit/{id_tindaklanjut}', [PengurusController::class, 'updatetindaklanjut'])->middleware('userAkses:pengurus')->name('updatetindaklanjut');
     Route::get('/tindaklanjut/hapus/{id_tindaklanjut}', [PengurusController::class, 'hapustindaklanjut'])->middleware('userAkses:pengurus')->name('hapustindaklanjut');
+    Route::get('/tindaklanjut/cari', [PengurusController::class, 'caritindaklanjut'])->name('caritindaklanjut');
     Route::get('/pengaduan', [PengurusController::class, 'listpengaduan'])->name('listpengaduan');
     Route::post('/pengaduan/input', [PengurusController::class, 'inputpengaduan'])->middleware('userAkses:pengurus')->name('inputpengaduan');
     Route::post('/pengaduan/edit/{id_pengaduan}', [PengurusController::class, 'updatepengaduan'])->middleware('userAkses:pengurus')->name('updatepengaduan');
@@ -82,6 +84,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/respon/hapus/{id_respon}', [PengawasController::class, 'hapusrespon'])->middleware('userAkses:pengawas')->name('hapusrespon');
     Route::get('/tindaklanjut/respon/{id_tindaklanjut}', [PengawasController::class, 'respontindaklanjut'])->middleware('userAkses:pengawas')->name('respontindaklanjut');
     Route::post('/tindaklanjut/respon/{id_tindaklanjut}', [PengawasController::class, 'storerespontl'])->middleware('userAkses:pengawas')->name('storerespontl');
+    Route::get('/tindaklanjut/edit/respon/{id_tindaklanjut}', [PengawasController::class, 'respontindaklanjut'])->middleware('userAkses:pengawas')->name('editrespontl');
+    Route::get('/tindaklanjut/lihat/respon/{id_tindaklanjut}', [PengawasController::class, 'lihatrespontl'])->name('lihatrespontl');
 
     Route::get('/kabid', [KabidController::class,'index'])->middleware('userAkses:kabid')->name('kabid');
     Route::get('/dashboard/statistics', [KabidController::class, 'getStatisticsApi'])->name('dashboard.statistics');

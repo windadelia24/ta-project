@@ -33,7 +33,6 @@
             <div class="select-wrapper">
                 <select class="form-control" id="role" name="role" required>
                     <option value="" disabled selected hidden>Pilih Role</option>
-                    <option value="pengurus">Pengurus</option>
                     <option value="pengawas">Pengawas</option>
                     <option value="kabid">Kabid</option>
                     <option value="admin">Admin</option>
@@ -41,13 +40,36 @@
                 <i class="fas fa-caret-down form-control-icon"></i>
             </div>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label" style="font-weight: bold;">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required>
+        <div class="mb-3 position-relative">
+            <label for="password" class="form-label fw-bold">Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required>
+                <span class="input-group-text" onclick="togglePassword()">
+                    <i id="eyeIcon" class="fas fa-eye"></i>
+                </span>
+            </div>
         </div>
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary px-4">Simpan</button>
         </div>
     </form>
 </div>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<script>
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+
+      if (type === 'text') {
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    }
+</script>
 @endsection
