@@ -25,14 +25,20 @@
                 @endphp
                     <tr>
                         <td class="text-center">{{ ($pengaduan->currentPage() - 1) * $pengaduan->perPage() + $index + 1 }}</td>
-                        <td class="text-center">{{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->isoFormat('D MMMM Y') }}</td>
+                        <td class="text-center">
+                            {{ \Carbon\Carbon::parse($item->tanggal_pengaduan)->isoFormat('D MMMM Y') }}
+                        </td>
                         @if(Auth::user()->role != 'pengurus')
                             <td class="text-wrap" style="max-width: 100px;">
                                 <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
                                     {{ $item->koperasi->nama_koperasi ?? 'Data Belum Tersedia' }}
                                 </div>
                             </td>
-                            <td class="text-center">{{ $item->koperasi->kabupaten ?? 'Data Belum Tersedia' }}</td>
+                            <td class="text-wrap" style="max-width: 120px;">
+                                <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
+                                    {{ $item->koperasi->kabupaten ?? 'Data Belum Tersedia' }}
+                                </div>
+                            </td>
                         @endif
                         <td class="text-wrap" style="max-width: 300px;">
                             <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
