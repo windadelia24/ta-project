@@ -15,6 +15,22 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/register', [SesiController::class, 'register']);
 });
 
+Route::get('/forgot-password', [SesiController::class, 'showLinkRequestForm'])
+    ->middleware('guest')
+    ->name('password.request');
+
+Route::post('/forgot-password', [SesiController::class, 'sendResetLinkEmail'])
+    ->middleware('guest')
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [SesiController::class, 'showResetForm'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+Route::post('/reset-password', [SesiController::class, 'reset'])
+    ->middleware('guest')
+    ->name('password.update');
+
 Route::get('/home', function () {
     $user = Auth::user();
 
