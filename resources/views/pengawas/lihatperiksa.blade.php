@@ -11,7 +11,15 @@
     <div id="step1">
         <div class="mb-3">
             <label for="koperasi" class="form-label fw-bold">Koperasi</label>
-            <input type="text" class="form-control" value="{{ $pemeriksaan->koperasi->nama_koperasi ?? 'Tidak ditemukan' }}" readonly>
+            <input type="text" class="form-control" value="{{ $pemeriksaan->koperasi->nama_koperasi ?? 'Tidak ditemukan' }}" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="skor" class="form-label fw-bold">Skor Kesehatan Koperasi</label>
+            <input type="text" class="form-control" value="{{ $pemeriksaan->skor_akhir ?? 'Tidak ditemukan' }}" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="kategori" class="form-label fw-bold">Kategori Kesehatan Koperasi</label>
+            <input type="text" class="form-control" value="{{ $pemeriksaan->kategori ?? 'Tidak ditemukan' }}" disabled>
         </div>
     </div>
 

@@ -44,9 +44,6 @@
         @if (Auth::user()->role === 'admin')
             <li><a href="{{ route('listakun') }}"><i class="fa-solid fa-circle-user"></i> Akun</a></li>
         @endif
-
-        {{-- Logout --}}
-        <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
 </div>
 
