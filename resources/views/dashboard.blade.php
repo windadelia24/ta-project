@@ -5,7 +5,7 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-8">
-            <h2 class="text-dark fw-bold">Selamat Datang, {{ Auth::user()->name }}</h2>
+            <h3 class="text-dark fw-bold">Dashboard Monitoring</h3>
         </div>
         <div class="col-4 text-end">
             <label class="form-label text-muted small mb-1">Filter Tahun</label>
@@ -43,7 +43,10 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-muted mb-1">KOPERASI YANG MENINDAKLANJUTI</h6>
-                            <h2 class="fw-bold mb-0" id="koperasiMenindaklanjuti">{{ $statistics['koperasi_menindaklanjuti'] ?? 0 }}</h2>
+                            <div class="d-flex align-items-center">
+                                <h2 class="fw-bold mb-0 me-2" id="koperasiMenindaklanjuti">{{ $statistics['koperasi_menindaklanjuti'] ?? 0 }}</h2>
+                                <span class="badge bg-success fs-6" id="persenMenindaklanjuti">{{ ($statistics['persen_menindaklanjuti'] ?? 0) }}%</span>
+                            </div>
                         </div>
                         <div class="bg-danger bg-opacity-10 p-3 rounded">
                             <i class="fas fa-check-circle text-danger fa-2x"></i>
@@ -59,7 +62,10 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="text-muted mb-1">KOPERASI YANG BELUM MENINDAKLANJUTI</h6>
-                            <h2 class="fw-bold mb-0" id="koperasiBelumMenindaklanjuti">{{ $statistics['koperasi_belum_menindaklanjuti'] ?? 0 }}</h2>
+                            <div class="d-flex align-items-center">
+                                <h2 class="fw-bold mb-0 me-2" id="koperasiBelumMenindaklanjuti">{{ $statistics['koperasi_belum_menindaklanjuti'] ?? 0 }}</h2>
+                                <span class="badge bg-warning fs-6" id="persenBelumMenindaklanjuti">{{ ($statistics['persen_belum_menindaklanjuti'] ?? 0) }}%</span>
+                            </div>
                         </div>
                         <div class="bg-secondary bg-opacity-10 p-3 rounded">
                             <i class="fas fa-clock text-secondary fa-2x"></i>
@@ -72,8 +78,21 @@
 
     <!-- Charts Section -->
     <div class="row">
+        <!-- Pie Chart Kategori Koperasi -->
+        <div class="col-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 text-dark fw-bold">Proporsi Kesehatan Koperasi</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 400px;">
+                        <canvas id="kategoriChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Chart Kota -->
-        <div class="col-12 mb-4">
+        <div class="col-6 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom">
                     <h5 class="mb-0 text-dark fw-bold">Koperasi Yang Menindaklanjuti Per Kota</h5>
@@ -151,6 +170,125 @@ document.addEventListener('DOMContentLoaded', function() {
         'Kab. Solok Selatan',
         'Kab. Tanah Datar'
     ];
+
+    // Data default untuk pie chart kategori
+    let currentKategoriData = [0, 0, 0, 0];
+    const kategoriLabels = ['Sehat', 'Cukup Sehat', 'Dalam Pengawasan', 'Dalam Pengawasan Khusus'];
+    const kategoriColors = ['#28a745', '#ffc107', '#fd7e14', '#dc3545'];
+    let kategoriDetailData = {};
+
+    // Function untuk update persentase
+    function updatePercentages() {
+        const total = parseInt(document.getElementById('totalKoperasi').textContent) || 0;
+        const menindaklanjuti = parseInt(document.getElementById('koperasiMenindaklanjuti').textContent) || 0;
+        const belumMenindaklanjuti = parseInt(document.getElementById('koperasiBelumMenindaklanjuti').textContent) || 0;
+
+        if (total > 0) {
+            const persenMenindaklanjuti = Math.round((menindaklanjuti / total) * 100);
+            const persenBelumMenindaklanjuti = Math.round((belumMenindaklanjuti / total) * 100);
+
+            // Cek apakah element persentase ada
+            const persenMenindaklanjutiEl = document.getElementById('persenMenindaklanjuti');
+            const persenBelumMenindaklanjutiEl = document.getElementById('persenBelumMenindaklanjuti');
+
+            if (persenMenindaklanjutiEl) {
+                persenMenindaklanjutiEl.textContent = persenMenindaklanjuti + '%';
+            }
+            if (persenBelumMenindaklanjutiEl) {
+                persenBelumMenindaklanjutiEl.textContent = persenBelumMenindaklanjuti + '%';
+            }
+        } else {
+            // Jika total 0, set persentase ke 0%
+            const persenMenindaklanjutiEl = document.getElementById('persenMenindaklanjuti');
+            const persenBelumMenindaklanjutiEl = document.getElementById('persenBelumMenindaklanjuti');
+
+            if (persenMenindaklanjutiEl) {
+                persenMenindaklanjutiEl.textContent = '0%';
+            }
+            if (persenBelumMenindaklanjutiEl) {
+                persenBelumMenindaklanjutiEl.textContent = '0%';
+            }
+        }
+    }
+
+    // Inisialisasi Pie Chart Kategori
+    const ctxKategori = document.getElementById('kategoriChart').getContext('2d');
+    const kategoriChart = new Chart(ctxKategori, {
+        type: 'pie',
+        data: {
+            labels: kategoriLabels,
+            datasets: [{
+                data: currentKategoriData,
+                backgroundColor: kategoriColors,
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((context.parsed * 100) / total).toFixed(1) : 0;
+                            return `${context.label}: ${context.parsed} (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 800,
+                easing: 'easeInOutQuart'
+            }
+        },
+        plugins: [{
+            id: 'percentageLabels',
+            afterDatasetsDraw: function(chart) {
+                const ctx = chart.ctx;
+                const meta = chart.getDatasetMeta(0);
+                const dataset = chart.data.datasets[0];
+                const total = dataset.data.reduce((a, b) => a + b, 0);
+
+                if (total === 0) return;
+
+                meta.data.forEach((arc, index) => {
+                    const value = dataset.data[index];
+                    const percentage = ((value * 100) / total).toFixed(1);
+
+                    if (percentage < 5) return;
+
+                    const position = arc.tooltipPosition();
+
+                    ctx.save();
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 3;
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+
+                    ctx.fillText(`${percentage}%`, position.x, position.y);
+                    ctx.restore();
+                });
+            }
+        }]
+    });
 
     // Data default (akan diupdate via AJAX)
     let currentKotaData = [0, 0, 0, 0, 0, 0, 0];
@@ -315,6 +453,11 @@ document.addEventListener('DOMContentLoaded', function() {
             updateStatWithAnimation('koperasiMenindaklanjuti', data.koperasi_menindaklanjuti);
             updateStatWithAnimation('koperasiBelumMenindaklanjuti', data.koperasi_belum_menindaklanjuti);
 
+            // Update persentase setelah angka selesai diupdate
+            setTimeout(() => {
+                updatePercentages();
+            }, 600); // Delay sedikit setelah animasi counter selesai
+
             // Update chart data jika ada
             if (data.chart_data) {
                 // Update chart kota
@@ -329,6 +472,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentKabupatenData = processChartData(data.chart_data.kabupaten, kabupatenLabels, 'kabupaten');
                     kabupatenChart.data.datasets[0].data = currentKabupatenData;
                     kabupatenChart.update('active');
+                }
+                if (data.chart_data.kategori) {
+                    currentKategoriData = data.chart_data.kategori.map(item => item.jumlah);
+                    kategoriChart.data.datasets[0].data = currentKategoriData;
+                    kategoriChart.update('active');
                 }
             }
         })
@@ -412,6 +560,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load data untuk tahun default (2025)
     loadDataByYear(2025);
+
+    // Update persentase setelah load awal
+    setTimeout(() => {
+        updatePercentages();
+    }, 1000);
 });
 </script>
 

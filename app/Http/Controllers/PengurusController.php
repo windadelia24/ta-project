@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailTindakLanjut;
 use App\Models\Pemeriksaan;
 use App\Models\Pengaduan;
 use App\Models\TindakLanjut;
@@ -34,10 +35,15 @@ class PengurusController extends Controller
             $koperasi = $user->pengurus?->koperasi;
 
             $periksa = $koperasi
-                ? $koperasi->pemeriksaan()->with(['koperasi', 'user', 'tindakLanjut'])->paginate(10)
+                ? $koperasi->pemeriksaan()->with(['koperasi', 'user', 'tindakLanjut']) ->orderBy('created_at', 'desc')->paginate(10)
                 : collect();
         } else {
-            $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])->paginate(10);
+            $periksa = Pemeriksaan::whereHas('tindakLanjut', function ($query) {
+                $query->whereNotNull('created_at');
+            })
+            ->with(['koperasi', 'user', 'tindakLanjut'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         }
 
         Carbon::setLocale('id');
@@ -65,11 +71,11 @@ class PengurusController extends Controller
             'bukti_tl_pr.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
 
             // Bagian Kinerja Keuangan
-            'kinerja_keuangan' => 'required|string',
+            'kinerja_keuangan' => 'nullable|string',
             'bukti_tl_kk.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
 
             // Bagian Permodalan
-            'permodalan' => 'required|string',
+            'permodalan' => 'nullable|string',
             'bukti_tl_pk.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
 
             // Bagian Temuan Lainnya
@@ -84,31 +90,67 @@ class PengurusController extends Controller
         $bukti_tl_pk = $this->uploadFiles($request->file('bukti_tl_pk'), 'bukti_tl_pk');
         $bukti_tl_tl = $this->uploadFiles($request->file('bukti_tl_tl'), 'bukti_tl_tl');
 
-        // Simpan ke database
-        TindakLanjut::create([
+        $tindakLanjut = TindakLanjut::create([
             'id_pemeriksaan' => $request->id_pemeriksaan,
-            'prinsip_koperasi' => $request->prinsip_koperasi,
-            'kelembagaan' => $request->kelembagaan,
-            'manajemen_koperasi' => $request->manajemen_koperasi,
-            'prinsip_syariah' => $request->prinsip_syariah,
-            'bukti_tl_tk' => json_encode($bukti_tl_tk),
-
-            'risiko_inheren' => $request->risiko_inheren,
-            'kpmr' => $request->kpmr,
-            'bukti_tl_pr' => json_encode($bukti_tl_pr),
-
-            'kinerja_keuangan' => $request->kinerja_keuangan,
-            'bukti_tl_kk' => json_encode($bukti_tl_kk),
-
-            'permodalan' => $request->permodalan,
-            'bukti_tl_pk' => json_encode($bukti_tl_pk),
-
-            'temuan_lainnya' => $request->temuan_lainnya,
-            'bukti_tl_tl' => json_encode($bukti_tl_tl),
             'status_tindaklanjut' => 'Ditindaklanjuti',
         ]);
 
-        return redirect()->route('listtindaklanjut')->with('success', 'Pemeriksaan berhasil diupdate.');
+        DetailTindakLanjut::create([
+            'id_tindaklanjut' => $tindakLanjut->id_tindaklanjut,
+            'nama_aspek' => 'Tata Kelola',
+            'deskripsi' => [
+                'prinsip_koperasi' => $request->prinsip_koperasi,
+                'kelembagaan' => $request->kelembagaan,
+                'manajemen_koperasi' => $request->manajemen_koperasi,
+                'prinsip_syariah' => $request->prinsip_syariah,
+            ],
+            'bukti_tindaklanjut' => $bukti_tl_tk,
+        ]);
+
+        DetailTindakLanjut::create([
+            'id_tindaklanjut' => $tindakLanjut->id_tindaklanjut,
+            'nama_aspek' => 'Profil Resiko',
+            'deskripsi' => [
+                'risiko_inheren' => $request->risiko_inheren,
+                'kpmr' => $request->kpmr,
+            ],
+            'bukti_tindaklanjut' => $bukti_tl_pr,
+        ]);
+
+        if ($request->kinerja_keuangan || !empty($bukti_tl_kk)) {
+            DetailTindakLanjut::create([
+                'id_tindaklanjut' => $tindakLanjut->id_tindaklanjut,
+                'nama_aspek' => 'Kinerja Keuangan',
+                'deskripsi' => [
+                    'kinerja_keuangan' => $request->kinerja_keuangan,
+                ],
+                'bukti_tindaklanjut' => $bukti_tl_kk,
+            ]);
+        }
+
+        if ($request->permodalan || !empty($bukti_tl_pk)) {
+            DetailTindakLanjut::create([
+                'id_tindaklanjut' => $tindakLanjut->id_tindaklanjut,
+                'nama_aspek' => 'Permodalan',
+                'deskripsi' => [
+                    'permodalan' => $request->permodalan,
+                ],
+                'bukti_tindaklanjut' => $bukti_tl_pk,
+            ]);
+        }
+
+        if ($request->temuan_lainnya || !empty($bukti_tl_tl)) {
+            DetailTindakLanjut::create([
+                'id_tindaklanjut' => $tindakLanjut->id_tindaklanjut,
+                'nama_aspek' => 'Temuan Lainnya',
+                'deskripsi' => [
+                    'temuan_lainnya' => $request->temuan_lainnya,
+                ],
+                'bukti_tindaklanjut' => $bukti_tl_tl,
+            ]);
+        }
+
+        return redirect()->route('listtindaklanjut')->with('success', 'Data berhasil disimpan.');
     }
 
     private function uploadFiles($files, $folder)
@@ -141,13 +183,13 @@ class PengurusController extends Controller
 
     public function lihattindaklanjut($id_tindaklanjut)
     {
-        $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        $tindaklanjut = TindakLanjut::with('detailTindakLanjuts')->findOrFail($id_tindaklanjut);
         return view('pengurus.lihattindaklanjut', compact('tindaklanjut'));
     }
 
     public function edittindaklanjut($id_tindaklanjut)
     {
-        $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        $tindaklanjut = TindakLanjut::with('detailTindakLanjuts')->findOrFail($id_tindaklanjut);
         $statusAspekTl = json_decode($tindaklanjut->status_aspektl, true);
         return view('pengurus.edittindaklanjut', compact('tindaklanjut', 'statusAspekTl'));
     }
@@ -155,14 +197,14 @@ class PengurusController extends Controller
     public function updatetindaklanjut(Request $request, $id_tindaklanjut)
     {
         $request->validate([
-            'prinsip_koperasi' => 'required|string',
-            'kelembagaan' => 'required|string',
-            'manajemen_koperasi' => 'required|string',
-            'prinsip_syariah' => 'required|string',
-            'risiko_inheren' => 'required|string',
-            'kpmr' => 'required|string',
-            'kinerja_keuangan' => 'required|string',
-            'permodalan' => 'required|string',
+            'prinsip_koperasi' => 'nullable|string',
+            'kelembagaan' => 'nullable|string',
+            'manajemen_koperasi' => 'nullable|string',
+            'prinsip_syariah' => 'nullable|string',
+            'risiko_inheren' => 'nullable|string',
+            'kpmr' => 'nullable|string',
+            'kinerja_keuangan' => 'nullable|string',
+            'permodalan' => 'nullable|string',
             'temuan_lainnya' => 'nullable|string',
             'bukti_tl_tk.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
             'bukti_tl_pr.*' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx',
@@ -172,43 +214,84 @@ class PengurusController extends Controller
         ]);
 
         $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
+        $buktitk = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Tata Kelola')->first()->bukti_tindaklanjut;
+        $buktipr = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Profil Resiko')->first()->bukti_tindaklanjut;
+        $buktikk = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Kinerja Keuangan')->first()->bukti_tindaklanjut;
+        $buktipk = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Permodalan')->first()->bukti_tindaklanjut;
+        $buktitl = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Temuan Lainnya')->first()->bukti_tindaklanjut;
 
         // Proses file upload dan hapus
-        $bukti_tl_tk = $this->handleFileUpload($request, $tindaklanjut->bukti_tl_tk, 'bukti_tl_tk', 'deletedFilesBuktiTk');
-        $bukti_tl_pr = $this->handleFileUpload($request, $tindaklanjut->bukti_tl_pr, 'bukti_tl_pr', 'deletedFilesBuktiPr');
-        $bukti_tl_kk = $this->handleFileUpload($request, $tindaklanjut->bukti_tl_kk, 'bukti_tl_kk', 'deletedFilesBuktiKk');
-        $bukti_tl_pk = $this->handleFileUpload($request, $tindaklanjut->bukti_tl_pk, 'bukti_tl_pk', 'deletedFilesBuktiPk');
-        $bukti_tl_tl = $this->handleFileUpload($request, $tindaklanjut->bukti_tl_tl, 'bukti_tl_tl', 'deletedFilesBuktiTl');
+        $bukti_tl_tk = $this->handleFileUpload($request, $buktitk, 'bukti_tl_tk', 'deletedFilesBuktiTk');
+        $bukti_tl_pr = $this->handleFileUpload($request, $buktipr, 'bukti_tl_pr', 'deletedFilesBuktiPr');
+        $bukti_tl_kk = $this->handleFileUpload($request, $buktikk, 'bukti_tl_kk', 'deletedFilesBuktiKk');
+        $bukti_tl_pk = $this->handleFileUpload($request, $buktipk, 'bukti_tl_pk', 'deletedFilesBuktiPk');
+        $bukti_tl_tl = $this->handleFileUpload($request, $buktitl, 'bukti_tl_tl', 'deletedFilesBuktiTl');
 
-        // Kalau sudah sesuai, lanjutkan simpan
-        $tindaklanjut->update([
-            'prinsip_koperasi' => $request->prinsip_koperasi,
-            'kelembagaan' => $request->kelembagaan,
-            'manajemen_koperasi' => $request->manajemen_koperasi,
-            'prinsip_syariah' => $request->prinsip_syariah,
-            'risiko_inheren' => $request->risiko_inheren,
-            'kpmr' => $request->kpmr,
-            'kinerja_keuangan' => $request->kinerja_keuangan,
-            'permodalan' => $request->permodalan,
-            'temuan_lainnya' => $request->temuan_lainnya,
-            'bukti_tl_tk' => json_encode($bukti_tl_tk),
-            'bukti_tl_pr' => json_encode($bukti_tl_pr),
-            'bukti_tl_kk' => json_encode($bukti_tl_kk),
-            'bukti_tl_pk' => json_encode($bukti_tl_pk),
-            'bukti_tl_tl' => json_encode($bukti_tl_tl),
-        ]);
+        $aspekData = [
+            'Tata Kelola' => [
+                'fields' => [
+                    'prinsip_koperasi' => $request->prinsip_koperasi,
+                    'kelembagaan' => $request->kelembagaan,
+                    'manajemen_koperasi' => $request->manajemen_koperasi,
+                    'prinsip_syariah' => $request->prinsip_syariah,
+                ],
+                'bukti' => $bukti_tl_tk,
+            ],
+            'Profil Resiko' => [
+                'fields' => [
+                    'risiko_inheren' => $request->risiko_inheren,
+                    'kpmr' => $request->kpmr,
+                ],
+                'bukti' => $bukti_tl_pr,
+            ],
+            'Kinerja Keuangan' => [
+                'fields' => [
+                    'kinerja_keuangan' => $request->kinerja_keuangan,
+                ],
+                'bukti' => $bukti_tl_kk,
+            ],
+            'Permodalan' => [
+                'fields' => [
+                    'permodalan' => $request->permodalan,
+                ],
+                'bukti' => $bukti_tl_pk,
+            ],
+            'Temuan Lainnya' => [
+                'fields' => [
+                    'temuan_lainnya' => $request->temuan_lainnya,
+                ],
+                'bukti' => $bukti_tl_tl,
+            ],
+        ];
+
+        foreach ($aspekData as $namaAspek => $data) {
+            $detail = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', $namaAspek)->first();
+
+            if ($detail) {
+                $deskripsi = $detail->deskripsi ?? [];
+
+                foreach ($data['fields'] as $key => $value) {
+                    if ($request->filled($key)) {
+                        $deskripsi[$key] = $value;
+                    }
+                }
+
+                $detail->deskripsi = $deskripsi;
+                $detail->bukti_tindaklanjut = $data['bukti'];
+                $detail->save();
+            }
+        }
 
         return redirect()->route('listtindaklanjut')->with('success', 'Data berhasil diperbarui');
     }
 
     private function handleFileUpload(Request $request, $existingFiles, $inputName, $deletedInputName)
     {
-        $files = $existingFiles ? json_decode($existingFiles, true) : [];
+        $files = $existingFiles ?: [];
 
         // Hapus file jika diminta
-        if ($request->has($deletedInputName) && !empty($request->{$deletedInputName}[0])) {
-            $deletedFilesJson = $request->{$deletedInputName}[0]; // Ambil string JSON
-            $deletedFilePaths = json_decode($deletedFilesJson, true); // Decode JSON
+        if ($request->has($deletedInputName) && !empty($request->{$deletedInputName})) {
+            $deletedFilePaths = $request->{$deletedInputName}; // Decode JSON
 
             foreach ($deletedFilePaths as $filePath) {
                 // Cari dan hapus berdasarkan path
@@ -251,13 +334,11 @@ class PengurusController extends Controller
     {
         $tindaklanjut = TindakLanjut::findOrFail($id_tindaklanjut);
 
-        // Hapus semua file terkait
-        $this->hapusFiles(json_decode($tindaklanjut->bukti_tl_tk));
-        $this->hapusFiles(json_decode($tindaklanjut->bukti_tl_pr));
-        $this->hapusFiles(json_decode($tindaklanjut->bukti_tl_kk));
-        $this->hapusFiles(json_decode($tindaklanjut->bukti_tl_pk));
-        $this->hapusFiles(json_decode($tindaklanjut->bukti_tl_tl));
+        foreach ($tindaklanjut->detailTindakLanjuts as $detail) {
+            $this->hapusFiles($detail->bukti_tindaklanjut);
+        }
 
+        DetailTindakLanjut::where('id_tindaklanjut', $id_tindaklanjut)->delete();
         // Hapus record
         $tindaklanjut->delete();
 
@@ -433,11 +514,14 @@ class PengurusController extends Controller
             if ($koperasi) {
                 $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])
                 ->whereHas('koperasi', function ($q) use ($koperasi) {
-                    $q->where('nik', $koperasi->nik); // 🔐 Filter berdasarkan koperasi milik pengurus
+                    $q->where('nik', $koperasi->nik);
                 })
                 ->where(function ($query) use ($search) {
                     $query->whereHas('tindakLanjut', function($q) use ($search) {
-                        $q->where('created_at', 'like', '%' . $search . '%');
+                        $q->where(function ($sub) use ($search) {
+                            $sub->where('created_at', 'like', '%' . $search . '%')
+                                ->orWhere('status_tindaklanjut', 'like', '%' . $search . '%');
+                        });
 
                         if ($search) {
                             $bulanMap = [
@@ -467,7 +551,11 @@ class PengurusController extends Controller
             // Pencarian untuk pengawas (semua data pemeriksaan)
             $periksa = Pemeriksaan::with(['koperasi', 'user', 'tindakLanjut'])
                 ->whereHas('tindakLanjut', function($query) use ($search) {
-                    $query->where('created_at', 'like', '%' . $search . '%');
+                    $query->whereNotNull('created_at')
+                        ->where(function($q) use ($search) {
+                        $q->where('created_at', 'like', '%' . $search . '%')
+                        ->orWhere('status_tindaklanjut', 'like', '%' . $search . '%');
+                    });
 
                     // Tambahan: Cari berdasarkan nama bulan Indonesia
                     if ($search) {

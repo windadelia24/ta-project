@@ -276,16 +276,13 @@ class AdminController extends Controller
                 ->orWhere('nbh', 'like', "%{$search}%")
                 ->paginate(10);
 
-            // Append search parameter to pagination links
             $koperasi->appends(['search' => $search]);
         }
 
-        // Jika request adalah AJAX, kembalikan partial view
         if ($request->ajax()) {
             return view('admin.tablekoperasi', compact('koperasi'))->render();
         }
 
-        // Jika bukan AJAX, kembalikan view utama
         return view('admin.listkoperasi', compact('koperasi'));
     }
 }

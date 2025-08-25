@@ -625,18 +625,18 @@
                                     <strong>Input Tambahan untuk Risiko Likuiditas:</strong>
                                     <div class="mb-2">
                                         <label for="kas-bank-{{ $sectionIndex }}" class="form-label">Jumlah kas, bank, simpanan pada koperasi lainnya</label>
-                                        <input type="text" class="form-control rupiah-format" id="kas-bank-{{ $sectionIndex }}" value="{{ number_format($pemeriksaan->keuangan->kas_bank ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->kas_bank ?? 0 }}">
-                                        <input type="hidden" name="likuiditas[{{ $sectionIndex }}][kas_bank]" id="kas-bank-{{ $sectionIndex }}-hidden" value="{{ $pemeriksaan->keuangan->kas_bank ?? 0 }}">
+                                        <input type="text" class="form-control rupiah-format" id="kas-bank-{{ $sectionIndex }}" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'kas_bank')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kas_bank')->first()->nominal?? 0 }}">
+                                        <input type="hidden" name="likuiditas[{{ $sectionIndex }}][kas_bank]" id="kas-bank-{{ $sectionIndex }}-hidden" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kas_bank')->first()->nominal ?? 0 }}">
                                     </div>
                                     <div class="mb-2">
                                         <label for="aktiva-{{ $sectionIndex }}" class="form-label">Jumlah aktiva</label>
-                                        <input type="text" class="form-control rupiah-format" id="aktiva-{{ $sectionIndex }}" value="{{ number_format($pemeriksaan->keuangan->aktiva ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->aktiva ?? 0 }}">
-                                        <input type="hidden" name="likuiditas[{{ $sectionIndex }}][aktiva]" id="aktiva-{{ $sectionIndex }}-hidden" value="{{ $pemeriksaan->keuangan->aktiva ?? 0 }}">
+                                        <input type="text" class="form-control rupiah-format" id="aktiva-{{ $sectionIndex }}" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva')->first()->nominal ?? 0 }}">
+                                        <input type="hidden" name="likuiditas[{{ $sectionIndex }}][aktiva]" id="aktiva-{{ $sectionIndex }}-hidden" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva')->first()->nominal ?? 0 }}">
                                     </div>
                                     <div class="mb-2">
                                         <label for="kewajiban-{{ $sectionIndex }}" class="form-label">Jumlah kewajiban lancar</label>
-                                        <input type="text" class="form-control rupiah-format" id="kewajiban-{{ $sectionIndex }}" value="{{ number_format($pemeriksaan->keuangan->kewajiban_lancar ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->kewajiban_lancar ?? 0 }}">
-                                        <input type="hidden" name="likuiditas[{{ $sectionIndex }}][kewajiban]" id="kewajiban-{{ $sectionIndex }}-hidden" value="{{ $pemeriksaan->keuangan->kewajiban_lancar ?? 0 }}">
+                                        <input type="text" class="form-control rupiah-format" id="kewajiban-{{ $sectionIndex }}" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_lancar')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_lancar')->first()->nominal ?? 0 }}">
+                                        <input type="hidden" name="likuiditas[{{ $sectionIndex }}][kewajiban]" id="kewajiban-{{ $sectionIndex }}-hidden" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_lancar')->first()->nominal ?? 0 }}">
                                     </div>
                                 </div>
                             @endif
@@ -665,176 +665,176 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                     <label for="ekuitas">1. Jumlah Ekuitas</label>
-                    <input type="text" class="form-control rp-format" id="ekuitas" value="{{ number_format($pemeriksaan->keuangan->ekuitas ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->ekuitas ?? 0 }}">
-                    <input type="hidden" id="ekuitas-hidden" name="ekuitas" value="{{ $pemeriksaan->keuangan->ekuitas ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="ekuitas" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'ekuitas')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'ekuitas')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="ekuitas-hidden" name="ekuitas" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'ekuitas')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="pinjaman-usaha">2. Jumlah Pinjaman/Piutang Usaha</label>
-                    <input type="text" class="form-control rp-format" id="pinjaman-usaha" value="{{ number_format($pemeriksaan->keuangan->pinjaman_usaha ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->pinjaman_usaha ?? 0 }}">
-                    <input type="hidden" id="pinjaman-usaha-hidden" name="pinjaman-usaha" value="{{ $pemeriksaan->keuangan->pinjaman_usaha ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="pinjaman-usaha" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'pinjaman_usaha')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'pinjaman_usaha')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="pinjaman-usaha-hidden" name="pinjaman-usaha" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'pinjaman_usaha')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="kewajiban-ekuitas">3. Jumlah Kewajiban dan Ekuitas</label>
-                    <input type="text" class="form-control rp-format" id="kewajiban-ekuitas" value="{{ number_format($pemeriksaan->keuangan->kewajiban_ekuitas ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->kewajiban_ekuitas ?? 0 }}">
-                    <input type="hidden" id="kewajiban-ekuitas-hidden" name="kewajiban-ekuitas" value="{{ $pemeriksaan->keuangan->kewajiban_ekuitas ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="kewajiban-ekuitas" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_ekuitas')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_ekuitas')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="kewajiban-ekuitas-hidden" name="kewajiban-ekuitas" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_ekuitas')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="hutang-pajak">4. Hutang Pajak</label>
-                    <input type="text" class="form-control rp-format" id="hutang-pajak" value="{{ number_format($pemeriksaan->keuangan->hutang_pajak ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->hutang_pajak ?? 0 }}">
-                    <input type="hidden" id="hutang-pajak-hidden" name="hutang-pajak" value="{{ $pemeriksaan->keuangan->hutang_pajak ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="hutang-pajak" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'hutang_pajak')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'hutang_pajak')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="hutang-pajak-hidden" name="hutang-pajak" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'hutang_pajak')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="beban-masuk">5. Beban yang Masih Harus Dibayar</label>
-                    <input type="text" class="form-control rp-format" id="beban-masuk" value="{{ number_format($pemeriksaan->keuangan->beban_masuk ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->beban_masuk ?? 0 }}">
-                    <input type="hidden" id="beban-masuk-hidden" name="beban-masuk" value="{{ $pemeriksaan->keuangan->beban_masuk ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="beban-masuk" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'beban_masuk')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_masuk')->first()->nominal?? 0 }}">
+                    <input type="hidden" id="beban-masuk-hidden" name="beban-masuk" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_masuk')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="hutang-biaya">6. Hutang Biaya/PKP-RI</label>
-                    <input type="text" class="form-control rp-format" id="hutang-biaya" value="{{ number_format($pemeriksaan->keuangan->hutang_biaya ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->hutang_biaya ?? 0 }}">
-                    <input type="hidden" id="hutang-biaya-hidden" name="hutang-biaya" value="{{ $pemeriksaan->keuangan->hutang_biaya ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="hutang-biaya" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'hutang_biaya')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'hutang_biaya')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="hutang-biaya-hidden" name="hutang-biaya" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'hutang_biaya')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="aktiva-lancar">7. Jumlah Aktiva Lancar</label>
-                    <input type="text" class="form-control rp-format" id="aktiva-lancar" value="{{ number_format($pemeriksaan->keuangan->aktiva_lancar ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->aktiva_lancar ?? 0 }}">
-                    <input type="hidden" id="aktiva-lancar-hidden" name="aktiva-lancar" value="{{ $pemeriksaan->keuangan->aktiva_lancar ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="aktiva-lancar" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva_lancar')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva_lancar')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="aktiva-lancar-hidden" name="aktiva-lancar" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva_lancar')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="persediaan">8. Persediaan Barang Dagang</label>
-                    <input type="text" class="form-control rp-format" id="persediaan" value="{{ number_format($pemeriksaan->keuangan->persediaan ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->persediaan ?? 0 }}">
-                    <input type="hidden" id="persediaan-hidden" name="persediaan" value="{{ $pemeriksaan->keuangan->persediaan ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="persediaan" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'persediaan')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'persediaan')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="persediaan-hidden" name="persediaan" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'persediaan')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="piutang-dagang">9. Piutang Dagang</label>
-                    <input type="text" class="form-control rp-format" id="piutang-dagang" value="{{ number_format($pemeriksaan->keuangan->piutang_dagang ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->piutang_dagang ?? 0 }}">
-                    <input type="hidden" id="piutang-dagang-hidden" name="piutang-dagang" value="{{ $pemeriksaan->keuangan->piutang_dagang ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="piutang-dagang" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'piutang_dagang')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'piutang_dagang')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="piutang-dagang-hidden" name="piutang-dagang" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'piutang_dagang')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="simpanan-pokok">10. Simpanan Pokok</label>
-                    <input type="text" class="form-control rp-format" id="simpanan-pokok" value="{{ number_format($pemeriksaan->keuangan->simpanan_pokok ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->simpanan_pokok ?? 0 }}">
-                    <input type="hidden" id="simpanan-pokok-hidden" name="simpanan-pokok" value="{{ $pemeriksaan->keuangan->simpanan_pokok ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="simpanan-pokok" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_pokok')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_pokok')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="simpanan-pokok-hidden" name="simpanan-pokok" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_pokok')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="simpanan-wajib">11. Simpanan Wajib</label>
-                    <input type="text" class="form-control rp-format" id="simpanan-wajib" value="{{ number_format($pemeriksaan->keuangan->simpanan_wajib ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->simpanan_wajib ?? 0 }}">
-                    <input type="hidden" id="simpanan-wajib-hidden" name="simpanan-wajib" value="{{ $pemeriksaan->keuangan->simpanan_wajib ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="simpanan-wajib" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_wajib')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_wajib')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="simpanan-wajib-hidden" name="simpanan-wajib" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_pokok')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="tabungan-anggota">12. Tabungan/simpanan anggota</label>
-                    <input type="text" class="form-control rp-format" id="tabungan-anggota" value="{{ number_format($pemeriksaan->keuangan->tabungan_anggota ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->tabungan_anggota ?? 0 }}">
-                    <input type="hidden" id="tabungan-anggota-hidden" name="tabungan-anggota" value="{{ $pemeriksaan->keuangan->tabungan_anggota ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="tabungan-anggota" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'tabungan_anggota')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'tabungan_anggota')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="tabungan-anggota-hidden" name="tabungan-anggota" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'tabungan_anggota')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="tabungan-nonanggota">13. Tabungan/simpanan non anggota/waserda</label>
-                    <input type="text" class="form-control rp-format" id="tabungan-nonanggota" value="{{ number_format($pemeriksaan->keuangan->tabungan_nonanggota ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->tabungan_nonanggota ?? 0 }}">
-                    <input type="hidden" id="tabungan-nonanggota-hidden" name="tabungan-nonanggota" value="{{ $pemeriksaan->keuangan->tabungan_nonanggota ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="tabungan-nonanggota" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'tabungan_nonanggota')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'tabungan_nonanggota')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="tabungan-nonanggota-hidden" name="tabungan-nonanggota" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'tabungan_nonanggota')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="simpanan-jangkaanggota">14. Simpanan berjangka anggota</label>
-                    <input type="text" class="form-control rp-format" id="simpanan-jangkaanggota" value="{{ number_format($pemeriksaan->keuangan->simpanan_jangka_anggota ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->simpanan_jangka_anggota ?? 0 }}">
-                    <input type="hidden" id="simpanan-jangkaanggota-hidden" name="simpanan-jangkaanggota" value="{{ $pemeriksaan->keuangan->simpanan_jangka_anggota ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="simpanan-jangkaanggota" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_jangka_anggota')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_jangka_anggota')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="simpanan-jangkaanggota-hidden" name="simpanan-jangkaanggota" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_jangka_anggota')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="simpananjangka-calonanggota">15. Simpanan berjangka calon anggota & koperasi lain</label>
-                    <input type="text" class="form-control rp-format" id="simpananjangka-calonanggota" value="{{ number_format($pemeriksaan->keuangan->simpanan_jangka_calonanggota ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->simpanan_jangka_calonanggota ?? 0 }}">
-                    <input type="hidden" id="simpananjangka-calonanggota-hidden" name="simpananjangka-calonanggota" value="{{ $pemeriksaan->keuangan->simpanan_jangka_calonanggota ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="simpananjangka-calonanggota" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_jangka_calonanggota')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_jangka_calonanggota')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="simpananjangka-calonanggota-hidden" name="simpananjangka-calonanggota" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'simpanan_jangka_calonanggota')->first()->nominal?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="aktiva-lalu">16. Jumlah Aktiva Tahun Lalu</label>
-                    <input type="text" class="form-control rp-format" id="aktiva-lalu" value="{{ number_format($pemeriksaan->keuangan->aktiva_lalu ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->aktiva_lalu ?? 0 }}">
-                    <input type="hidden" id="aktiva-lalu-hidden" name="aktiva-lalu" value="{{ $pemeriksaan->keuangan->aktiva_lalu ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="aktiva-lalu" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva_lalu')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva_lalu')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="aktiva-lalu-hidden" name="aktiva-lalu" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'aktiva_lalu')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="ekuitas-lalu">17. Jumlah Ekuitas Tahun Lalu</label>
-                    <input type="text" class="form-control rp-format" id="ekuitas-lalu" value="{{ number_format($pemeriksaan->keuangan->ekuitas_lalu ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->ekuitas_lalu ?? 0 }}">
-                    <input type="hidden" id="ekuitas-lalu-hidden" name="ekuitas-lalu" value="{{ $pemeriksaan->keuangan->ekuitas_lalu ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="ekuitas-lalu" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'ekuitas_lalu')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'ekuitas_lalu')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="ekuitas-lalu-hidden" name="ekuitas-lalu" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'ekuitas_lalu')->first()->nominal?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="shu">18. Sisa Hasil Usaha Setelah Pajak</label>
-                    <input type="text" class="form-control rp-format" id="shu" value="{{ number_format($pemeriksaan->keuangan->shu ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->shu ?? 0 }}">
-                    <input type="hidden" id="shu-hidden" name="shu" value="{{ $pemeriksaan->keuangan->shu ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="shu" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'shu')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'shu')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="shu-hidden" name="shu" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'shu')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="partisipasi-bruto">19. Jumlah Partisipasi Bruto Anggota</label>
-                    <input type="text" class="form-control rp-format" id="partisipasi-bruto" value="{{ number_format($pemeriksaan->keuangan->partisipasi_bruto ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->partisipasi_bruto ?? 0 }}">
-                    <input type="hidden" id="partisipasi-bruto-hidden" name="partisipasi-bruto" value="{{ $pemeriksaan->keuangan->partisipasi_bruto ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="partisipasi-bruto" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'partisipasi_bruto')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'partisipasi_bruto')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="partisipasi-bruto-hidden" name="partisipasi-bruto" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'partisipasi_bruto')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="beban-pokok">20. Jumlah Beban Pokok Anggota</label>
-                    <input type="text" class="form-control rp-format" id="beban-pokok" value="{{ number_format($pemeriksaan->keuangan->beban_pokok ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->beban_pokok ?? 0 }}">
-                    <input type="hidden" id="beban-pokok-hidden" name="beban-pokok" value="{{ $pemeriksaan->keuangan->beban_pokok ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="beban-pokok" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'beban_pokok')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_pokok')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="beban-pokok-hidden" name="beban-pokok" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_pokok')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="porsi-beban">21. Porsi Beban Usaha Anggota</label>
-                    <input type="text" class="form-control rp-format" id="porsi-beban" value="{{ number_format($pemeriksaan->keuangan->porsi_beban ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->porsi_beban ?? 0 }}">
-                    <input type="hidden" id="porsi-beban-hidden" name="porsi-beban" value="{{ $pemeriksaan->keuangan->porsi_beban ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="porsi-beban" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'porsi_beban')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'porsi_beban')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="porsi-beban-hidden" name="porsi-beban" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'porsi_beban')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="beban-perkoperasian">22. Jumlah Beban Perkoperasian</label>
-                    <input type="text" class="form-control rp-format" id="beban-perkoperasian" value="{{ number_format($pemeriksaan->keuangan->beban_perkoperasian ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->beban_perkoperasian ?? 0 }}">
-                    <input type="hidden" id="beban-perkoperasian-hidden" name="beban-perkoperasian" value="{{ $pemeriksaan->keuangan->beban_perkoperasian ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="beban-perkoperasian" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'beban_perkoperasian')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_perkoperasian')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="beban-perkoperasian-hidden" name="beban-perkoperasian" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_perkoperasian')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="beban-usaha">23. Jumlah Beban Usaha</label>
-                    <input type="text" class="form-control rp-format" id="beban-usaha" value="{{ number_format($pemeriksaan->keuangan->beban_usaha ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->beban_usaha ?? 0 }}">
-                    <input type="hidden" id="beban-usaha-hidden" name="beban-usaha" value="{{ $pemeriksaan->keuangan->beban_usaha ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="beban-usaha" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'beban_usaha')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_usaha')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="beban-usaha-hidden" name="beban-usaha" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_usaha')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="shu-kotor">24. Sisa Hasil Usaha Kotor</label>
-                    <input type="text" class="form-control rp-format" id="shu-kotor" value="{{ number_format($pemeriksaan->keuangan->shu_kotor ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->shu_kotor ?? 0 }}">
-                    <input type="hidden" id="shu-kotor-hidden" name="shu-kotor" value="{{ $pemeriksaan->keuangan->shu_kotor ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="shu-kotor" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'shu_kotor')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'shu_kotor')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="shu-kotor-hidden" name="shu-kotor" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'shu_kotor')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="beban-penjualan">25. Beban Pokok Penjualan</label>
-                    <input type="text" class="form-control rp-format" id="beban-penjualan" value="{{ number_format($pemeriksaan->keuangan->beban_penjualan ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->beban_penjualan ?? 0 }}">
-                    <input type="hidden" id="beban-penjualan-hidden" name="beban-penjualan" value="{{ $pemeriksaan->keuangan->beban_penjualan ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="beban-penjualan" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'beban_penjualan')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_penjualan')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="beban-penjualan-hidden" name="beban-penjualan" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'beban_penjualan')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="penjualan-anggota">26. Penjualan pada Anggota</label>
-                    <input type="text" class="form-control rp-format" id="penjualan-anggota" value="{{ number_format($pemeriksaan->keuangan->penjualan_anggota ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->penjualan_anggota ?? 0 }}">
-                    <input type="hidden" id="penjualan-anggota-hidden" name="penjualan-anggota" value="{{ $pemeriksaan->keuangan->penjualan_anggota ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="penjualan-anggota" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'penjualan_anggota')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'penjualan_anggota')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="penjualan-anggota-hidden" name="penjualan-anggota" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'penjualan_anggota')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="penjualan-nonanggota">27. Penjualan pada Non Anggota</label>
-                    <input type="text" class="form-control rp-format" id="penjualan-nonanggota" value="{{ number_format($pemeriksaan->keuangan->penjualan_nonanggota ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->penjualan_nonanggota ?? 0 }}">
-                    <input type="hidden" id="penjualan-nonanggota-hidden" name="penjualan-nonanggota" value="{{ $pemeriksaan->keuangan->penjualan_nonanggota ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="penjualan-nonanggota" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'penjualan_nonanggota')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'penjualan_nonanggota')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="penjualan-nonanggota-hidden" name="penjualan-nonanggota" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'penjualan_nonanggota')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="pendapatan">28. Jumlah Pendapatan</label>
-                    <input type="text" class="form-control rp-format" id="pendapatan" value="{{ number_format($pemeriksaan->keuangan->pendapatan ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->pendapatan ?? 0 }}" >
-                    <input type="hidden" id="pendapatan-hidden" name="pendapatan" value="{{ $pemeriksaan->keuangan->pendapatan ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="pendapatan" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'pendapatan')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'pendapatan')->first()->nominal ?? 0 }}" >
+                    <input type="hidden" id="pendapatan-hidden" name="pendapatan" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'pendapatan')->first()->nominal ?? 0 }}">
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="shu-lalu">29. Sisa Hasil Usaha Setelah Pajak Tahun Lalu</label>
-                    <input type="text" class="form-control rp-format" id="shu-lalu" value="{{ number_format($pemeriksaan->keuangan->shu_lalu ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->shu_lalu ?? 0 }}">
-                    <input type="hidden" id="shu-lalu-hidden" name="shu-lalu" value="{{ $pemeriksaan->keuangan->shu_lalu ?? 0 }}">
+                    <input type="text" class="form-control rp-format" id="shu-lalu" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'shu_lalu')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'shu_lalu')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="shu-lalu-hidden" name="shu-lalu" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'shu_lalu')->first()->nominal ?? 0 }}">
                     </div>
                 </div>
             </div>
@@ -972,14 +972,14 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                     <label for="titipan-dana">1. Titipan Dana Kebajikan Anggota</label>
-                    <input type="text" class="form-control rupiah" id="titipan-dana" name="titipan-dana" value="{{ number_format($pemeriksaan->keuangan->titipan_dana ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->titipan_dana ?? 0 }}">
-                    <input type="hidden" id="titipan-dana-hidden" name="titipan-dana" value="{{ $pemeriksaan->keuangan->titipan_dana ?? 0 }}" >
+                    <input type="text" class="form-control rupiah" id="titipan-dana" name="titipan-dana" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'titipan_dana')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'titipan_dana')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="titipan-dana-hidden" name="titipan-dana" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'titipan_dana')->first()->nominal ?? 0 }}" >
                     </div>
 
                     <div class="col-md-4 mb-3">
                     <label for="kewajiban-panjang">2. Jumlah Kewajiban Jangka Panjang </label>
-                    <input type="text" class="form-control rupiah" id="kewajiban-panjang" name="kewajiban-panjang" value="{{ number_format($pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0 }}">
-                    <input type="hidden" id="kewajiban-panjang-hidden" name="kewajiban-panjang" value="{{ $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0 }}">
+                    <input type="text" class="form-control rupiah" id="kewajiban-panjang" name="kewajiban-panjang" value="{{ number_format($pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_jangka_panjang')->first()->nominal ?? 0, 0, ',', '.') }}" data-raw="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_jangka_panjang')->first()->nominal ?? 0 }}">
+                    <input type="hidden" id="kewajiban-panjang-hidden" name="kewajiban-panjang" value="{{ $pemeriksaan->keuangan->where('aspek_keuangan', 'kewajiban_jangka_panjang')->first()->nominal ?? 0 }}">
                     </div>
                 </div>
             </div>

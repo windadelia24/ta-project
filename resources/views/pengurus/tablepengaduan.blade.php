@@ -66,9 +66,11 @@
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id_pengaduan }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('hapuspengaduan', $item->id_pengaduan) }}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                @if(strtolower($item->status_pengaduan) != 'direspon')
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('hapuspengaduan', $item->id_pengaduan) }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                @endif
 
                             {{-- Tombol khusus untuk pengawas --}}
                             @elseif(Auth::user()->role == 'pengawas')

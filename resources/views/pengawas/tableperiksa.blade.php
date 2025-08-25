@@ -37,13 +37,9 @@
                                 <a href="{{ route('editperiksa', $item->id_pemeriksaan) }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{{ route('fileperiksa', $item->id_pemeriksaan) }}" class="btn btn-success btn-sm">
-                                    <i class="fas fa-file"></i>
-                                </a>
-                            @endif
-                            @if (!empty($item->file_ba))
-                                <a href="{{ asset('storage/' . $item->file_ba) }}" class="btn btn-info btn-sm" download>
-                                    <i class="fas fa-download"></i></a>
+                                {{-- <a href="{{ route('hapusperiksa', $item->id_pemeriksaan) }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a> --}}
                             @endif
                         </td>
                     </tr>

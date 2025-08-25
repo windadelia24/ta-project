@@ -4,7 +4,7 @@
             <tr>
                 <th>No.</th>
                 <th>Tanggal Tilakes</th>
-                @if(Auth::check() && Auth::user()->role === 'pengawas')
+                @if(Auth::check() && in_array(Auth::user()->role, ['admin', 'kabid', 'pengawas']))
                     <th>Nama Koperasi</th>
                     <th>Kota/Kabupaten</th>
                 @endif
@@ -33,7 +33,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        @if(Auth::check() && Auth::user()->role === 'pengawas')
+                        @if(Auth::check() && in_array(Auth::user()->role, ['admin', 'kabid', 'pengawas']))
                             <td class="text-wrap" style="max-width: 200px;">
                                 <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
                                     {{ $item->koperasi->nama_koperasi ?? 'Data Belum Tersedia' }}
@@ -69,10 +69,6 @@
                                 <a href="{{ route('lihatperiksa', $item->id_pemeriksaan) }}" class="btn btn-warning btn-sm">
                                     Cek
                                 </a>
-                                @if (!empty($item->file_ba))
-                                    <a href="{{ asset('storage/' . $item->file_ba) }}" class="btn btn-info btn-sm" download>
-                                        <i class="fas fa-download"></i></a>
-                                @endif
                             </td>
                         @endif
                         <td class="text-center">

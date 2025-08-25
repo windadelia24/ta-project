@@ -14,62 +14,49 @@ class KabidController extends Controller
 
     private function getStatistics()
     {
-        // 1. Total Koperasi yang Diperiksa
-        // Menghitung berdasarkan unique NIK dari tabel pemeriksaan
-        $totalKoperasi = DB::table('pemeriksaan')
-            ->select('nik')
-            ->distinct()
-            ->count();
+        // 1. Total Pemeriksaan
+        $totalKoperasi = DB::table('pemeriksaan')->count();
 
-        // 2. Koperasi yang Menindaklanjuti
-        // Mengambil id_pemeriksaan yang ada di tabel tindak_lanjut
+        // 2. Pemeriksaan yang Menindaklanjuti
         $pemeriksaanDenganTindakLanjut = DB::table('tindak_lanjut')
             ->select('id_pemeriksaan')
             ->distinct()
             ->pluck('id_pemeriksaan')
             ->toArray();
 
-        // Menghitung unique NIK dari pemeriksaan yang memiliki tindak lanjut
         $koperasiMenindaklanjuti = DB::table('pemeriksaan')
             ->whereIn('id_pemeriksaan', $pemeriksaanDenganTindakLanjut)
-            ->select('nik')
-            ->distinct()
             ->count();
 
-        // 3. Koperasi yang Belum Menindaklanjuti
-        // Mengambil id_pemeriksaan yang TIDAK ada di tabel tindak_lanjut
-        $pemeriksaanTanpaTindakLanjut = DB::table('pemeriksaan')
+        // 3. Pemeriksaan yang Belum Menindaklanjuti
+        $koperasiBelumMenindaklanjuti = DB::table('pemeriksaan')
             ->whereNotIn('id_pemeriksaan', $pemeriksaanDenganTindakLanjut)
-            ->select('id_pemeriksaan', 'nik')
-            ->get();
-
-        // Menghitung unique NIK dari pemeriksaan yang belum memiliki tindak lanjut
-        $koperasiBelumMenindaklanjuti = $pemeriksaanTanpaTindakLanjut
-            ->unique('nik')
             ->count();
+
+        $persenMenindaklanjuti = $totalKoperasi > 0 ? round(($koperasiMenindaklanjuti / $totalKoperasi) * 100, 1) : 0;
+        $persenBelumMenindaklanjuti = $totalKoperasi > 0 ? round(($koperasiBelumMenindaklanjuti / $totalKoperasi) * 100, 1) : 0;
 
         return [
             'total_koperasi' => $totalKoperasi,
             'koperasi_menindaklanjuti' => $koperasiMenindaklanjuti,
-            'koperasi_belum_menindaklanjuti' => $koperasiBelumMenindaklanjuti
+            'koperasi_belum_menindaklanjuti' => $koperasiBelumMenindaklanjuti,
+            'persen_menindaklanjuti' => $persenMenindaklanjuti,
+            'persen_belum_menindaklanjuti' => $persenBelumMenindaklanjuti
         ];
     }
 
-    // Method untuk mendapatkan data berdasarkan tahun (jika diperlukan)
     public function getStatisticsByYear($year = null)
     {
         if (!$year) {
             $year = date('Y');
         }
 
-        // 1. Total Koperasi yang Diperiksa berdasarkan tahun
+        // 1. Total Pemeriksaan berdasarkan tahun
         $totalKoperasi = DB::table('pemeriksaan')
             ->whereYear('tanggal_periksa', $year)
-            ->select('nik')
-            ->distinct()
             ->count();
 
-        // 2. Koperasi yang Menindaklanjuti berdasarkan tahun
+        // 2. Pemeriksaan yang Menindaklanjuti berdasarkan tahun
         $pemeriksaanDenganTindakLanjut = DB::table('tindak_lanjut')
             ->join('pemeriksaan', 'tindak_lanjut.id_pemeriksaan', '=', 'pemeriksaan.id_pemeriksaan')
             ->whereYear('pemeriksaan.tanggal_periksa', $year)
@@ -81,30 +68,27 @@ class KabidController extends Controller
         $koperasiMenindaklanjuti = DB::table('pemeriksaan')
             ->whereIn('id_pemeriksaan', $pemeriksaanDenganTindakLanjut)
             ->whereYear('tanggal_periksa', $year)
-            ->select('nik')
-            ->distinct()
             ->count();
 
-        // 3. Koperasi yang Belum Menindaklanjuti berdasarkan tahun
-        $pemeriksaanTanpaTindakLanjut = DB::table('pemeriksaan')
+        // 3. Pemeriksaan yang Belum Menindaklanjuti berdasarkan tahun
+        $koperasiBelumMenindaklanjuti = DB::table('pemeriksaan')
             ->whereYear('tanggal_periksa', $year)
             ->whereNotIn('id_pemeriksaan', $pemeriksaanDenganTindakLanjut)
-            ->select('id_pemeriksaan', 'nik')
-            ->get();
-
-        $koperasiBelumMenindaklanjuti = $pemeriksaanTanpaTindakLanjut
-            ->unique('nik')
             ->count();
+
+        $persenMenindaklanjuti = $totalKoperasi > 0 ? round(($koperasiMenindaklanjuti / $totalKoperasi) * 100, 1) : 0;
+        $persenBelumMenindaklanjuti = $totalKoperasi > 0 ? round(($koperasiBelumMenindaklanjuti / $totalKoperasi) * 100, 1) : 0;
 
         return [
             'total_koperasi' => $totalKoperasi,
             'koperasi_menindaklanjuti' => $koperasiMenindaklanjuti,
             'koperasi_belum_menindaklanjuti' => $koperasiBelumMenindaklanjuti,
+            'persen_menindaklanjuti' => $persenMenindaklanjuti,
+            'persen_belum_menindaklanjuti' => $persenBelumMenindaklanjuti,
             'year' => $year
         ];
     }
 
-    // API endpoint untuk AJAX request dari frontend
     public function getStatisticsApi(Request $request)
     {
         $year = $request->input('year');
@@ -115,56 +99,65 @@ class KabidController extends Controller
             'total_koperasi' => $statistics['total_koperasi'],
             'koperasi_menindaklanjuti' => $statistics['koperasi_menindaklanjuti'],
             'koperasi_belum_menindaklanjuti' => $statistics['koperasi_belum_menindaklanjuti'],
+            'persen_menindaklanjuti' => $statistics['persen_menindaklanjuti'],
+            'persen_belum_menindaklanjuti' => $statistics['persen_belum_menindaklanjuti'],
             'year' => $statistics['year'],
             'chart_data' => $chartData
         ]);
     }
 
-    // Method untuk mendapatkan data chart per kota/kabupaten
     public function getChartData($year = null)
     {
         if (!$year) {
             $year = date('Y');
         }
 
-        // Ambil NIK yang sudah menindaklanjuti berdasarkan tahun
-        $nikMenindaklanjuti = DB::table('pemeriksaan')
+        // Ambil semua pemeriksaan yang sudah menindaklanjuti berdasarkan tahun
+        $pemeriksaanMenindaklanjuti = DB::table('pemeriksaan')
             ->join('tindak_lanjut', 'pemeriksaan.id_pemeriksaan', '=', 'tindak_lanjut.id_pemeriksaan')
             ->whereYear('pemeriksaan.tanggal_periksa', $year)
             ->select('pemeriksaan.nik')
-            ->distinct()
-            ->pluck('nik')
-            ->toArray();
+            ->get();
 
-        // Ambil data koperasi berdasarkan NIK yang menindaklanjuti
+        $nikList = $pemeriksaanMenindaklanjuti->pluck('nik')->toArray();
+
+        // Ambil data koperasi berdasarkan NIK
         $koperasiData = DB::table('koperasi')
-            ->whereIn('nik', $nikMenindaklanjuti)
+            ->whereIn('nik', $nikList)
             ->select('nik', 'kabupaten')
             ->get();
+
+        // Buat mapping NIK ke kabupaten
+        $nikToKabupaten = [];
+        foreach ($koperasiData as $koperasi) {
+            $nikToKabupaten[$koperasi->nik] = $koperasi->kabupaten;
+        }
 
         // Pisahkan data berdasarkan prefix Kota atau Kabupaten
         $kotaData = [];
         $kabupatenData = [];
 
-        foreach ($koperasiData as $koperasi) {
-            $wilayah = trim($koperasi->kabupaten);
+        foreach ($pemeriksaanMenindaklanjuti as $pemeriksaan) {
+            if (isset($nikToKabupaten[$pemeriksaan->nik])) {
+                $wilayah = trim($nikToKabupaten[$pemeriksaan->nik]);
 
-            // Cek apakah dimulai dengan "Kota"
-            if (stripos($wilayah, 'Kota') === 0) {
-                $namaKota = trim($wilayah);
-                if (isset($kotaData[$namaKota])) {
-                    $kotaData[$namaKota]++;
-                } else {
-                    $kotaData[$namaKota] = 1;
+                // Cek apakah dimulai dengan "Kota"
+                if (stripos($wilayah, 'Kota') === 0) {
+                    $namaKota = trim($wilayah);
+                    if (isset($kotaData[$namaKota])) {
+                        $kotaData[$namaKota]++;
+                    } else {
+                        $kotaData[$namaKota] = 1;
+                    }
                 }
-            }
-            // Cek apakah dimulai dengan "Kabupaten" atau "Kab."
-            elseif (stripos($wilayah, 'Kabupaten') === 0 || stripos($wilayah, 'Kab.') === 0) {
-                $namaKabupaten = trim($wilayah);
-                if (isset($kabupatenData[$namaKabupaten])) {
-                    $kabupatenData[$namaKabupaten]++;
-                } else {
-                    $kabupatenData[$namaKabupaten] = 1;
+                // Cek apakah dimulai dengan "Kabupaten" atau "Kab."
+                elseif (stripos($wilayah, 'Kabupaten') === 0 || stripos($wilayah, 'Kab.') === 0) {
+                    $namaKabupaten = trim($wilayah);
+                    if (isset($kabupatenData[$namaKabupaten])) {
+                        $kabupatenData[$namaKabupaten]++;
+                    } else {
+                        $kabupatenData[$namaKabupaten] = 1;
+                    }
                 }
             }
         }
@@ -188,7 +181,47 @@ class KabidController extends Controller
 
         return [
             'kota' => $kotaResult,
-            'kabupaten' => $kabupatenResult
+            'kabupaten' => $kabupatenResult,
+            'kategori' => $this->getKategoriData($year)
         ];
+    }
+
+    public function getKategoriData($year = null)
+    {
+        if (!$year) {
+            $year = date('Y');
+        }
+
+        $kategoriData = DB::table('pemeriksaan')
+            ->whereYear('tanggal_periksa', $year)
+            ->select('kategori', DB::raw('COUNT(*) as jumlah'))
+            ->groupBy('kategori')
+            ->get();
+
+        // Pastikan semua kategori ada dengan nilai 0 jika tidak ada data
+        $defaultKategori = [
+            'SEHAT' => 0,
+            'CUKUP SEHAT' => 0,
+            'DALAM PENGAWASAN' => 0,
+            'DALAM PENGAWASAN KHUSUS' => 0
+        ];
+
+        foreach ($kategoriData as $item) {
+            $kategori = strtoupper(trim($item->kategori));
+            if (isset($defaultKategori[$kategori])) {
+                $defaultKategori[$kategori] = $item->jumlah;
+            }
+        }
+
+        // Convert ke format yang dibutuhkan frontend
+        $result = [];
+        foreach ($defaultKategori as $kategori => $jumlah) {
+            $result[] = [
+                'kategori' => $kategori,
+                'jumlah' => $jumlah
+            ];
+        }
+
+        return $result;
     }
 }

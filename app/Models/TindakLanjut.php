@@ -14,33 +14,19 @@ class TindakLanjut extends Model
 
     protected $fillable = [
         'id_pemeriksaan',
-        'prinsip_koperasi',
-        'kelembagaan',
-        'manajemen_koperasi',
-        'prinsip_syariah',
-        'risiko_inheren',
-        'kpmr',
-        'kinerja_keuangan',
-        'permodalan',
-        'temuan_lainnya',
-        'bukti_tl_tk',
-        'bukti_tl_pr',
-        'bukti_tl_kk',
-        'bukti_tl_pk',
-        'bukti_tl_tl',
-        'status_tindaklanjut'
-    ];
-
-    protected $casts = [
-        'bukti_tl_tk' => 'array',
-        'bukti_tl_pr' => 'array',
-        'bukti_tl_kk' => 'array',
-        'bukti_tl_pk' => 'array',
-        'bukti_tl_tl' => 'array',
+        'status_tindaklanjut',
+        'status_aspektl',
+        'respon_tl',
+        'nama_responder'
     ];
 
     public function pemeriksaan()
     {
         return $this->belongsTo(Pemeriksaan::class, 'id_pemeriksaan');
+    }
+
+    public function detailTindakLanjuts()
+    {
+        return $this->hasMany(DetailTindakLanjut::class, 'id_tindaklanjut');
     }
 }

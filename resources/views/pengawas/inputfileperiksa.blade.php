@@ -296,7 +296,7 @@ d. Silahkan edit disini</textarea>
         </div>
 
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary px-4">Simpan</button>
+            <button type="submit" class="btn btn-primary px-4">Generate</button>
         </div>
     </form>
 </div>

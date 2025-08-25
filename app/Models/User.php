@@ -49,6 +49,7 @@ class User extends Authenticatable
         'jabatan',
         'no_telp',
         'nbh',
+        'verification_token',
     ];
 
     /**
@@ -59,6 +60,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_token',
     ];
 
     /**
@@ -77,5 +79,10 @@ class User extends Authenticatable
     public function pengurus()
     {
         return $this->hasOne(Pengurus::class, 'nik_nip', 'nik_nip');
+    }
+
+    public function isEmailVerified()
+    {
+        return !is_null($this->email_verified_at);
     }
 }

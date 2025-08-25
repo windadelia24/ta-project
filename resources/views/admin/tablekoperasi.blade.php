@@ -18,7 +18,11 @@
             @foreach($koperasi as $index => $kop)
             <tr>
                 <td class="text-center">{{ $koperasi->firstItem() + $index }}</td>
-                <td>{{ $kop->nama_koperasi }}</td>
+                <td class="text-wrap" style="max-width: 300px;">
+                    <div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
+                        {{ $kop->nama_koperasi }}
+                    </div>
+                </td>
                 <td>{{ $kop->kabupaten }}</td>
                 <td>{{ $kop->nbh }}</td>
                 <td class="text-center">

@@ -18,37 +18,47 @@
         @csrf
         <input type="hidden" name="id_pemeriksaan" value="{{ $id_pemeriksaan }}">
 
+        @php
+            $placeholder = "Tuliskan deskripsi tindak lanjut berdasarkan pedoman hasil pemeriksaan. " .
+                          "Jika tidak ada, tuliskan 'Tidak ada temuan'.";
+        @endphp
+
         {{-- A. Aspek Tata Kelola --}}
         <h4 class="fw-bold mt-4">A. Aspek Tata Kelola</h4>
 
         {{-- Prinsip Koperasi --}}
         <div class="mb-3">
             <label class="form-label fw-bold">1. Prinsip Koperasi</label>
-            <textarea class="form-control" name="prinsip_koperasi" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="prinsip_koperasi" rows="3"
+                placeholder="{{ $placeholder }}" required></textarea>
         </div>
 
         {{-- Kelembagaan --}}
         <div class="mb-3">
             <label class="form-label fw-bold">2. Kelembagaan</label>
-            <textarea class="form-control" name="kelembagaan" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="kelembagaan" rows="3"
+                placeholder="{{ $placeholder }}" required></textarea>
         </div>
 
         {{-- Manajemen Koperasi --}}
         <div class="mb-3">
             <label class="form-label fw-bold">3. Manajemen Koperasi</label>
-            <textarea class="form-control" name="manajemen_koperasi" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="manajemen_koperasi" rows="3"
+                placeholder="{{ $placeholder }}" required></textarea>
         </div>
 
         {{-- Prinsip Syariah --}}
         <div class="mb-3">
             <label class="form-label fw-bold">4. Prinsip Syariah (Opsional)</label>
-            <textarea class="form-control" name="prinsip_syariah" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'."></textarea>
+            <textarea class="form-control" name="prinsip_syariah" rows="3"
+                placeholder="{{ $placeholder }}"></textarea>
         </div>
 
         {{-- Bukti TL TK --}}
         <div class="mb-3">
             <label class="form-label fw-bold">Bukti TL Tata Kelola</label>
-            <input type="file" class="form-control file-input" id="bukti-tk" name="bukti_tl_tk[]" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-tk">
+            <input type="file" class="form-control file-input" id="bukti-tk" name="bukti_tl_tk[]"
+                multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-tk">
             <small class="text-muted">Max 5 file, max 10MB per file</small>
             <small class="text-danger">* File wajib diunggah jika Anda mengisi deskripsi tindak lanjut.</small>
             <div id="file-preview-bukti-tk" class="mt-2 list-group"></div>
@@ -60,18 +70,21 @@
         {{-- Risiko Inheren --}}
         <div class="mb-3">
             <label class="form-label fw-bold">1. Risiko Inheren</label>
-            <textarea class="form-control" name="risiko_inheren" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="risiko_inheren" rows="3"
+                placeholder="{{ $placeholder }}" required></textarea>
         </div>
 
         {{-- KPMR --}}
         <div class="mb-3">
             <label class="form-label fw-bold">2. KPMR</label>
-            <textarea class="form-control" name="kpmr" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="kpmr" rows="3"
+                placeholder="{{ $placeholder }}" required></textarea>
         </div>
 
        <div class="mb-3">
             <label class="form-label fw-bold">Bukti TL Profil Risiko</label>
-            <input type="file" class="form-control file-input" id="bukti-pr" name="bukti_tl_pr[]" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-pr">
+            <input type="file" class="form-control file-input" id="bukti-pr" name="bukti_tl_pr[]"
+                multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-pr">
             <small class="text-muted">Max 5 file, max 10MB per file</small>
             <small class="text-danger">* File wajib diunggah jika Anda mengisi deskripsi tindak lanjut.</small>
             <div id="file-preview-bukti-pr" class="mt-2 list-group"></div>
@@ -83,12 +96,14 @@
         {{-- Kinerja Keuangan --}}
         <div class="mb-3">
             <label class="form-label fw-bold">Kinerja Keuangan</label>
-            <textarea class="form-control" name="kinerja_keuangan" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="kinerja_keuangan" rows="3"
+                placeholder="{{ $placeholder }}"></textarea>
         </div>
 
         <div class="mb-3">
             <label class="form-label fw-bold">Bukti TL Kinerja Keuangan</label>
-            <input type="file" class="form-control file-input" id="bukti-kk" name="bukti_tl_kk[]" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-kk">
+            <input type="file" class="form-control file-input" id="bukti-kk" name="bukti_tl_kk[]"
+                multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-kk">
             <small class="text-muted">Max 5 file, max 10MB per file</small>
             <small class="text-danger">* File wajib diunggah jika Anda mengisi deskripsi tindak lanjut.</small>
             <div id="file-preview-bukti-kk" class="mt-2 list-group"></div>
@@ -100,31 +115,35 @@
         {{-- Permodalan --}}
         <div class="mb-3">
             <label class="form-label fw-bold">Permodalan</label>
-            <textarea class="form-control" name="permodalan" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'." required></textarea>
+            <textarea class="form-control" name="permodalan" rows="3"
+                placeholder="{{ $placeholder }}"></textarea>
         </div>
 
         {{-- Bukti TL PK --}}
         <div class="mb-3">
             <label class="form-label fw-bold">Bukti TL Permodalan</label>
-            <input type="file" class="form-control file-input" id="bukti-pk" name="bukti_tl_pk[]" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-pk">
+            <input type="file" class="form-control file-input" id="bukti-pk" name="bukti_tl_pk[]"
+                multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-pk">
             <small class="text-muted">Max 5 file, max 10MB per file</small>
             <small class="text-danger">* File wajib diunggah jika Anda mengisi deskripsi tindak lanjut.</small>
             <div id="file-preview-bukti-pk" class="mt-2 list-group"></div>
         </div>
 
-         {{-- E. Aspek Temuan Lainnya --}}
+        {{-- E. Aspek Temuan Lainnya --}}
         <h4 class="fw-bold mt-4">E. Aspek Temuan Lainnya</h4>
 
         {{-- Temuan Lainnya --}}
         <div class="mb-3">
             <label class="form-label fw-bold">Temuan Lainnya</label>
-            <textarea class="form-control" name="temuan_lainnya" rows="3" placeholder="Tuliskan deskripsi tindak lanjut Anda di sini berdasarkan pedoman hasil pemeriksaan. Jika tidak ada, tuliskan 'Tidak ada temuan'."></textarea>
+            <textarea class="form-control" name="temuan_lainnya" rows="3"
+                placeholder="{{ $placeholder }}"></textarea>
         </div>
 
         {{-- Bukti TL TL --}}
         <div class="mb-3">
             <label class="form-label fw-bold">Bukti TL Temuan Lainnya</label>
-            <input type="file" class="form-control file-input" id="bukti-tl" name="bukti_tl_tl[]" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-tl">
+            <input type="file" class="form-control file-input" id="bukti-tl" name="bukti_tl_tl[]"
+                multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" data-preview="file-preview-bukti-tl">
             <small class="text-muted">Max 5 file, max 10MB per file</small>
             <small class="text-danger">* File wajib diunggah jika Anda mengisi deskripsi tindak lanjut.</small>
             <div id="file-preview-bukti-tl" class="mt-2 list-group"></div>

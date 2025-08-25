@@ -38,7 +38,7 @@ class Pemeriksaan extends Model
 
     public function keuangan()
     {
-        return $this->hasOne(Keuangan::class, 'id_pemeriksaan');
+        return $this->hasMany(Keuangan::class, 'id_pemeriksaan', 'id_pemeriksaan');
     }
 
     public function tindakLanjut()

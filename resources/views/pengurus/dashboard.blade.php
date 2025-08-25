@@ -2,9 +2,14 @@
 
 @section('content')
     <h1>Selamat Datang, {{ $user->name }}!</h1>
-    <p><strong>Skor Kesehatan {{ $koperasi->nama_koperasi }} : {{ $pemeriksaan->skor_akhir ?? 'Belum ada pemeriksaan'}}</strong><br>
-    Kesehatan koperasi Anda dikategorikan {{ strtolower($pemeriksaan->kategori) ?? 'Belum ada pemeriksaan' }}</p>
     <p>
+    @if($pemeriksaan)
+        <strong>Skor Kesehatan {{ $koperasi->nama_koperasi }} : {{ $pemeriksaan->skor_akhir }}</strong><br>
+        Kesehatan koperasi Anda dikategorikan {{ strtolower($pemeriksaan->kategori) }}
+    @else
+        <strong>{{ $koperasi->nama_koperasi }}</strong>
+    @endif
+    </p>
       Aplikasi ini merupakan aplikasi yang dapat membantu pengurus untuk melaporkan hasil tindak lanjut berdasarkan rekomendasi yang diberikan.
       Aplikasi ini juga dapat membantu pengurus untuk melaporkan kendala selama menindaklanjuti rekomendasi tersebut.
     </p>

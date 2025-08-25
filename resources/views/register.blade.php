@@ -46,7 +46,7 @@
             @csrf
             <input type="text" placeholder="NIK" value="{{ old('nik') }}" name="nik" class="form-control">
             <input type="text" placeholder="Nama" value="{{ old('name') }}" name="name" class="form-control">
-            <input type="email" placeholder="Email" value="{{ old('email') }}" name="email" class="form-control">
+            <input type="email" placeholder="Email yang Valid" value="{{ old('email') }}" name="email" class="form-control">
             <input type="text" placeholder="NIK (Nomor Induk Koperasi)" value="{{ old('nik_koperasi') }}" name="nik_koperasi" class="form-control">
             <div class="password-wrapper">
                 <input type="password" placeholder="Password" name="password" id="password" class="form-control">

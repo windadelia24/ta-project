@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -83,6 +84,8 @@ class SesiController extends Controller
             return back()->withErrors(['nik' => 'Koperasi anda tidak terdaftar, silahkan hubungi pengawas koperasi untuk didaftarkan'])->withInput();
         }
 
+        $verificationToken = Str::random(60);
+
         // Simpan ke tabel users
         $user = User::create([
             'nik_nip' => $request->nik,
@@ -90,16 +93,80 @@ class SesiController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'pengurus',
+            'email_verified_at' => null,
+            'verification_token' => $verificationToken,
         ]);
 
         // Simpan ke tabel pengurus
         Pengurus::create([
-            'nik_nip' => $user->nik_nip, // foreign key ke tabel users
-            'nik' => $koperasi->nik, // foreign key ke tabel koperasi
+            'nik_nip' => $user->nik_nip,
+            'nik' => $koperasi->nik,
         ]);
 
-        // Redirect ke login
-        return redirect()->route('login')->with('success', 'Registrasi berhasil, silahkan login!');
+        $this->sendVerificationEmail($user, $verificationToken);
+
+        // Redirect ke halaman info verifikasi
+        return redirect()->route('verification.notice')->with([
+            'success' => 'Registrasi berhasil! Silahkan cek email Anda untuk verifikasi akun.',
+            'email' => $user->email
+        ]);
+    }
+
+    private function sendVerificationEmail($user, $token)
+    {
+        $verificationUrl = route('email.verify', ['token' => $token]);
+
+        Mail::send('emails.verification', [
+            'user' => $user,
+            'verificationUrl' => $verificationUrl
+        ], function ($message) use ($user) {
+            $message->to($user->email, $user->name);
+            $message->subject('Verifikasi Email - Dinas Koperasi UKM Sumbar');
+        });
+    }
+
+    public function verifyEmail($token)
+    {
+        $user = User::where('verification_token', $token)->first();
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Token verifikasi tidak valid.');
+        }
+
+        // Cek apakah token sudah kedaluwarsa (24 jam)
+        if ($user->created_at->addHours(24) < now()) {
+            return redirect()->route('verification.notice')->with('error', 'Token verifikasi sudah kedaluwarsa. Silahkan minta kirim ulang email verifikasi.');
+        }
+
+        // Verifikasi email
+        $user->email_verified_at = now();
+        $user->verification_token = null; // Hapus token
+        $user->save();
+
+        return redirect()->route('login')->with('success', 'Email berhasil diverifikasi! Silahkan login.');
+    }
+
+    // Method untuk mengirim ulang email verifikasi
+    public function resendVerification(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->email_verified_at) {
+            return back()->with('error', 'Email sudah diverifikasi.');
+        }
+
+        // Generate token baru
+        $verificationToken = Str::random(60);
+        $user->verification_token = $verificationToken;
+        $user->save();
+
+        $this->sendVerificationEmail($user, $verificationToken);
+
+        return back()->with('success', 'Email verifikasi berhasil dikirim ulang.');
     }
 
     function profile(){

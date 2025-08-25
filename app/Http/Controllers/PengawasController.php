@@ -13,6 +13,7 @@ use App\Models\ResponPengaduan;
 use App\Models\TindakLanjut;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use setasign\Fpdi\Fpdi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -244,7 +245,6 @@ class PengawasController extends Controller
         }
 
         $keuangan = [
-            'id_pemeriksaan' => $pemeriksaan->id_pemeriksaan,
             'beban_pokok' => $request->input('beban-pokok'),
             'kas_bank' => $request->input('hidden_kas_bank'),
             'aktiva' => $request->input('hidden_aktiva'),
@@ -282,7 +282,13 @@ class PengawasController extends Controller
         ];
 
         // Simpan ke database
-        Keuangan::create($keuangan);
+        foreach ($keuangan as $aspek => $nominal) {
+            Keuangan::create([
+                'id_pemeriksaan' => $pemeriksaan->id_pemeriksaan,
+                'aspek_keuangan' => $aspek,
+                'nominal' => $nominal
+            ]);
+        }
 
         $dataIndikator = [];
 
@@ -377,40 +383,42 @@ class PengawasController extends Controller
         ->pluck('indikator')
         ->toArray();
 
-        $kas = $pemeriksaan->keuangan->kas_bank ?? 0;
-        $aktiva = $pemeriksaan->keuangan->aktiva ?? 0;
-        $kewajiban = $pemeriksaan->keuangan->kewajiban_lancar ?? 0;
-        $shu = $pemeriksaan->keuangan->shu ?? 0;
-        $ekuitas = $pemeriksaan->keuangan->ekuitas ?? 0;
-        $pinjamanUsaha = $pemeriksaan->keuangan->pinjaman_usaha ?? 0;
-        $kewajibanEkuitas = $pemeriksaan->keuangan->kewajiban_ekuitas ?? 0;
-        $hutangPajak = $pemeriksaan->keuangan->hutang_pajak ?? 0;
-        $bebanMasuk = $pemeriksaan->keuangan->beban_masuk ?? 0;
-        $hutangBiaya = $pemeriksaan->keuangan->hutang_biaya ?? 0;
-        $aktivaLancar = $pemeriksaan->keuangan->aktiva_lancar ?? 0;
-        $persediaan = $pemeriksaan->keuangan->persediaan ?? 0;
-        $piutangDagang = $pemeriksaan->keuangan->piutang_dagang ?? 0;
-        $tabunganAnggota = $pemeriksaan->keuangan->tabungan_anggota ?? 0;
-        $tabunganNonAnggota = $pemeriksaan->keuangan->tabungan_nonanggota ?? 0;
-        $simpananJangkaanggota = $pemeriksaan->keuangan->simpanan_jangka_anggota ?? 0;
-        $simpananJangkacalonanggota = $pemeriksaan->keuangan->simpanan_jangka_calonanggota ?? 0;
-        $partisipasiBruto = $pemeriksaan->keuangan->partisipasi_bruto ?? 0;
-        $bebanPokok = $pemeriksaan->keuangan->beban_pokok ?? 0;
-        $porsiBeban = $pemeriksaan->keuangan->porsi_beban ?? 0;
-        $bebanPerkoperasian = $pemeriksaan->keuangan->beban_perkoperasian ?? 0;
-        $bebanUsaha = $pemeriksaan->keuangan->beban_usaha ?? 0;
-        $shuKotor = $pemeriksaan->keuangan->shu_kotor ?? 0;
-        $bebanPenjualan = $pemeriksaan->keuangan->beban_penjualan ?? 0;
-        $penjualanAnggota = $pemeriksaan->keuangan->penjualan_anggota ?? 0;
-        $penjualanNonanggota = $pemeriksaan->keuangan->penjualan_nonanggota ?? 0;
-        $pendapatan = $pemeriksaan->keuangan->pendapatan ?? 0;
-        $simpanPokok = $pemeriksaan->keuangan->simpanan_pokok ?? 0;
-        $simpanWajib = $pemeriksaan->keuangan->simpanan_wajib ?? 0;
-        $aktivaLalu = $pemeriksaan->keuangan->aktiva_lalu ?? 0;
-        $ekuitasLalu = $pemeriksaan->keuangan->ekuitas_lalu ?? 0;
-        $shuLalu = $pemeriksaan->keuangan->shu_lalu ?? 0;
-        $titipanDana = $pemeriksaan->keuangan->titipan_dana ?? 0;
-        $kewajibanPanjang = $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0;
+        $keuanganData = $pemeriksaan->keuangan->pluck('nominal', 'aspek_keuangan')->toArray();
+
+        $kas = (float) ($keuanganData['kas_bank'] ?? 0);
+        $aktiva = (float) ($keuanganData['aktiva'] ?? 0);
+        $kewajiban = (float) ($keuanganData['kewajiban_lancar'] ?? 0);
+        $shu = (float) ($keuanganData['shu'] ?? 0);
+        $ekuitas = (float) ($keuanganData['ekuitas'] ?? 0);
+        $pinjamanUsaha = (float) ($keuanganData['pinjaman_usaha'] ?? 0);
+        $kewajibanEkuitas = (float) ($keuanganData['kewajiban_ekuitas'] ?? 0);
+        $hutangPajak = (float) ($keuanganData['hutang_pajak'] ?? 0);
+        $bebanMasuk = (float) ($keuanganData['beban_masuk'] ?? 0);
+        $hutangBiaya = (float) ($keuanganData['hutang_biaya'] ?? 0);
+        $aktivaLancar = (float) ($keuanganData['aktiva_lancar'] ?? 0);
+        $persediaan = (float) ($keuanganData['persediaan'] ?? 0);
+        $piutangDagang = (float) ($keuanganData['piutang_dagang'] ?? 0);
+        $tabunganAnggota = (float) ($keuanganData['tabungan_anggota'] ?? 0);
+        $tabunganNonAnggota = (float) ($keuanganData['tabungan_nonanggota'] ?? 0);
+        $simpananJangkaanggota = (float) ($keuanganData['simpanan_jangka_anggota'] ?? 0);
+        $simpananJangkacalonanggota = (float) ($keuanganData['simpanan_jangka_calonanggota'] ?? 0);
+        $partisipasiBruto = (float) ($keuanganData['partisipasi_bruto'] ?? 0);
+        $bebanPokok = (float) ($keuanganData['beban_pokok'] ?? 0);
+        $porsiBeban = (float) ($keuanganData['porsi_beban'] ?? 0);
+        $bebanPerkoperasian = (float) ($keuanganData['beban_perkoperasian'] ?? 0);
+        $bebanUsaha = (float) ($keuanganData['beban_usaha'] ?? 0);
+        $shuKotor = (float) ($keuanganData['shu_kotor'] ?? 0);
+        $bebanPenjualan = (float) ($keuanganData['beban_penjualan'] ?? 0);
+        $penjualanAnggota = (float) ($keuanganData['penjualan_anggota'] ?? 0);
+        $penjualanNonanggota = (float) ($keuanganData['penjualan_nonanggota'] ?? 0);
+        $pendapatan = (float) ($keuanganData['pendapatan'] ?? 0);
+        $simpanPokok = (float) ($keuanganData['simpanan_pokok'] ?? 0);
+        $simpanWajib = (float) ($keuanganData['simpanan_wajib'] ?? 0);
+        $aktivaLalu = (float) ($keuanganData['aktiva_lalu'] ?? 0);
+        $ekuitasLalu = (float) ($keuanganData['ekuitas_lalu'] ?? 0);
+        $shuLalu = (float) ($keuanganData['shu_lalu'] ?? 0);
+        $titipanDana = (float) ($keuanganData['titipan_dana'] ?? 0);
+        $kewajibanPanjang = (float) ($keuanganData['kewajiban_jangka_panjang'] ?? 0);
 
         $nilai1 = ($kas && $aktiva) ? $kas / $aktiva : 0;
         $skorAwal1 = $nilai1 <= 0.05 ? 4 : ($nilai1 <= 0.10 ? 3 : ($nilai1 <= 0.15 ? 2 : 1));
@@ -603,40 +611,42 @@ class PengawasController extends Controller
         ->pluck('indikator')
         ->toArray();
 
-        $kas = $pemeriksaan->keuangan->kas_bank ?? 0;
-        $aktiva = $pemeriksaan->keuangan->aktiva ?? 0;
-        $kewajiban = $pemeriksaan->keuangan->kewajiban_lancar ?? 0;
-        $shu = $pemeriksaan->keuangan->shu ?? 0;
-        $ekuitas = $pemeriksaan->keuangan->ekuitas ?? 0;
-        $pinjamanUsaha = $pemeriksaan->keuangan->pinjaman_usaha ?? 0;
-        $kewajibanEkuitas = $pemeriksaan->keuangan->kewajiban_ekuitas ?? 0;
-        $hutangPajak = $pemeriksaan->keuangan->hutang_pajak ?? 0;
-        $bebanMasuk = $pemeriksaan->keuangan->beban_masuk ?? 0;
-        $hutangBiaya = $pemeriksaan->keuangan->hutang_biaya ?? 0;
-        $aktivaLancar = $pemeriksaan->keuangan->aktiva_lancar ?? 0;
-        $persediaan = $pemeriksaan->keuangan->persediaan ?? 0;
-        $piutangDagang = $pemeriksaan->keuangan->piutang_dagang ?? 0;
-        $tabunganAnggota = $pemeriksaan->keuangan->tabungan_anggota ?? 0;
-        $tabunganNonAnggota = $pemeriksaan->keuangan->tabungan_nonanggota ?? 0;
-        $simpananJangkaanggota = $pemeriksaan->keuangan->simpanan_jangka_anggota ?? 0;
-        $simpananJangkacalonanggota = $pemeriksaan->keuangan->simpanan_jangka_calonanggota ?? 0;
-        $partisipasiBruto = $pemeriksaan->keuangan->partisipasi_bruto ?? 0;
-        $bebanPokok = $pemeriksaan->keuangan->beban_pokok ?? 0;
-        $porsiBeban = $pemeriksaan->keuangan->porsi_beban ?? 0;
-        $bebanPerkoperasian = $pemeriksaan->keuangan->beban_perkoperasian ?? 0;
-        $bebanUsaha = $pemeriksaan->keuangan->beban_usaha ?? 0;
-        $shuKotor = $pemeriksaan->keuangan->shu_kotor ?? 0;
-        $bebanPenjualan = $pemeriksaan->keuangan->beban_penjualan ?? 0;
-        $penjualanAnggota = $pemeriksaan->keuangan->penjualan_anggota ?? 0;
-        $penjualanNonanggota = $pemeriksaan->keuangan->penjualan_nonanggota ?? 0;
-        $pendapatan = $pemeriksaan->keuangan->pendapatan ?? 0;
-        $simpanPokok = $pemeriksaan->keuangan->simpanan_pokok ?? 0;
-        $simpanWajib = $pemeriksaan->keuangan->simpanan_wajib ?? 0;
-        $aktivaLalu = $pemeriksaan->keuangan->aktiva_lalu ?? 0;
-        $ekuitasLalu = $pemeriksaan->keuangan->ekuitas_lalu ?? 0;
-        $shuLalu = $pemeriksaan->keuangan->shu_lalu ?? 0;
-        $titipanDana = $pemeriksaan->keuangan->titipan_dana ?? 0;
-        $kewajibanPanjang = $pemeriksaan->keuangan->kewajiban_jangka_panjang ?? 0;
+        $keuanganData = $pemeriksaan->keuangan->pluck('nominal', 'aspek_keuangan')->toArray();
+
+        $kas = (float) ($keuanganData['kas_bank'] ?? 0);
+        $aktiva = (float) ($keuanganData['aktiva'] ?? 0);
+        $kewajiban = (float) ($keuanganData['kewajiban_lancar'] ?? 0);
+        $shu = (float) ($keuanganData['shu'] ?? 0);
+        $ekuitas = (float) ($keuanganData['ekuitas'] ?? 0);
+        $pinjamanUsaha = (float) ($keuanganData['pinjaman_usaha'] ?? 0);
+        $kewajibanEkuitas = (float) ($keuanganData['kewajiban_ekuitas'] ?? 0);
+        $hutangPajak = (float) ($keuanganData['hutang_pajak'] ?? 0);
+        $bebanMasuk = (float) ($keuanganData['beban_masuk'] ?? 0);
+        $hutangBiaya = (float) ($keuanganData['hutang_biaya'] ?? 0);
+        $aktivaLancar = (float) ($keuanganData['aktiva_lancar'] ?? 0);
+        $persediaan = (float) ($keuanganData['persediaan'] ?? 0);
+        $piutangDagang = (float) ($keuanganData['piutang_dagang'] ?? 0);
+        $tabunganAnggota = (float) ($keuanganData['tabungan_anggota'] ?? 0);
+        $tabunganNonAnggota = (float) ($keuanganData['tabungan_nonanggota'] ?? 0);
+        $simpananJangkaanggota = (float) ($keuanganData['simpanan_jangka_anggota'] ?? 0);
+        $simpananJangkacalonanggota = (float) ($keuanganData['simpanan_jangka_calonanggota'] ?? 0);
+        $partisipasiBruto = (float) ($keuanganData['partisipasi_bruto'] ?? 0);
+        $bebanPokok = (float) ($keuanganData['beban_pokok'] ?? 0);
+        $porsiBeban = (float) ($keuanganData['porsi_beban'] ?? 0);
+        $bebanPerkoperasian = (float) ($keuanganData['beban_perkoperasian'] ?? 0);
+        $bebanUsaha = (float) ($keuanganData['beban_usaha'] ?? 0);
+        $shuKotor = (float) ($keuanganData['shu_kotor'] ?? 0);
+        $bebanPenjualan = (float) ($keuanganData['beban_penjualan'] ?? 0);
+        $penjualanAnggota = (float) ($keuanganData['penjualan_anggota'] ?? 0);
+        $penjualanNonanggota = (float) ($keuanganData['penjualan_nonanggota'] ?? 0);
+        $pendapatan = (float) ($keuanganData['pendapatan'] ?? 0);
+        $simpanPokok = (float) ($keuanganData['simpanan_pokok'] ?? 0);
+        $simpanWajib = (float) ($keuanganData['simpanan_wajib'] ?? 0);
+        $aktivaLalu = (float) ($keuanganData['aktiva_lalu'] ?? 0);
+        $ekuitasLalu = (float) ($keuanganData['ekuitas_lalu'] ?? 0);
+        $shuLalu = (float) ($keuanganData['shu_lalu'] ?? 0);
+        $titipanDana = (float) ($keuanganData['titipan_dana'] ?? 0);
+        $kewajibanPanjang = (float) ($keuanganData['kewajiban_jangka_panjang'] ?? 0);
 
         $nilai1 = ($kas && $aktiva) ? $kas / $aktiva : 0;
         $skorAwal1 = $nilai1 <= 0.05 ? 4 : ($nilai1 <= 0.10 ? 3 : ($nilai1 <= 0.15 ? 2 : 1));
@@ -863,7 +873,7 @@ class PengawasController extends Controller
             ['judul' => 'judul_pksection_1', 'skor' => 'hidden_pengelolaan'],
         ]);
 
-        $keuangan = [
+        $keuanganData = [
             'beban_pokok' => $request->input('beban-pokok'),
             'kas_bank' => $request->input('hidden_kas_bank'),
             'aktiva' => $request->input('hidden_aktiva'),
@@ -900,8 +910,14 @@ class PengawasController extends Controller
             'kewajiban_jangka_panjang' => $request->input('kewajiban-panjang'),
         ];
 
-        // Simpan ke database
-        Keuangan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)->update($keuangan);
+        foreach ($keuanganData as $aspekKeuangan => $nominal) {
+            Keuangan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)
+                    ->where('aspek_keuangan', $aspekKeuangan)
+                    ->update([
+                        'nominal' => $nominal,
+                        'updated_at' => now(),
+                    ]);
+        }
 
         // Ambil data indikator lama dari DB
         $indikatorLama = IndikatorPemeriksaan::where('id_pemeriksaan', $pemeriksaan->id_pemeriksaan)->get();
@@ -1056,7 +1072,74 @@ class PengawasController extends Controller
         $pemeriksaan->file_ba = $relativePath;
         $pemeriksaan->save();
 
-        return redirect()->route('listperiksa')->with('success', 'Berita acara berhasil dibuat dan disimpan.');
+        return response()->file($fullPath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="berita-acara-preview.pdf"',
+        ]);
+    }
+
+    public function filesertifikat($id_pemeriksaan){
+        $pemeriksaan = Pemeriksaan::with('koperasi')->findOrFail($id_pemeriksaan);
+        $pengawasList = User::where('role', 'pengawas')->select('name', 'nik_nip')->get();
+
+        return view('pengawas.inputfilesertif', compact('pemeriksaan', 'pengawasList'));
+    }
+
+    public function generatesertifikat(Request $request, $id_pemeriksaan)
+    {
+        Carbon::setLocale('id');
+        $data = $request->all();
+
+        $pemeriksaan = Pemeriksaan::with('koperasi')->findOrFail($id_pemeriksaan);
+
+        $folderPath = storage_path('app/public/sertifikat');
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0777, true);
+        }
+
+        $filename = 'sertifikat_' . $pemeriksaan->id_pemeriksaan . '_' . time() . '.pdf';
+        $fileFullPath = $folderPath . '/' . $filename;
+
+        $pdfTemp = Pdf::loadView('pengawas.sertifikat', compact('pemeriksaan', 'data'))
+            ->setPaper('A4', 'portrait')
+            ->setWarnings(false)
+            ->output();
+
+        $tempPath = storage_path('app/temp_sertifikat_' . uniqid() . '.pdf');
+        file_put_contents($tempPath, $pdfTemp);
+
+        $templatePath = public_path('storage/template_sertifikat.pdf');
+        if (!file_exists($templatePath)) {
+            throw new \Exception('Template sertifikat tidak ditemukan');
+        }
+
+        $fpdi = new Fpdi();
+        $fpdi->AddPage();
+        $fpdi->setSourceFile($templatePath);
+        $templateId = $fpdi->importPage(1);
+        $fpdi->useTemplate($templateId, 0, 0, 210);
+
+        $fpdi->setSourceFile($tempPath);
+        $contentId = $fpdi->importPage(1);
+        $fpdi->useTemplate($contentId, 0, 0, 210);
+
+        // Simpan hasil final ke storage/sertifikat
+        $fpdi->Output($fileFullPath, 'F'); // 'F' untuk save ke file
+
+        // Cleanup temp file
+        if (file_exists($tempPath)) {
+            unlink($tempPath);
+        }
+
+        // 3. Simpan path relatif ke database (contoh: sertifikat/namafile.pdf)
+        $pemeriksaan->file_sertifikat = 'sertifikat/' . $filename;
+        $pemeriksaan->save();
+
+        // 4. Return hasil untuk preview langsung
+        return response()->file($fileFullPath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="sertifikat-preview.pdf"',
+        ]);
     }
 
     public function cariperiksa(Request $request)
@@ -1169,7 +1252,6 @@ class PengawasController extends Controller
 
         $respon->delete();
 
-        // Update status pengaduan menjadi Diajukan lagi
         Pengaduan::where('id_pengaduan', $id_pengaduan)->update([
             'status_pengaduan' => 'Diajukan',
         ]);

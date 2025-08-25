@@ -13,7 +13,9 @@
     {{-- Prinsip Koperasi --}}
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">1. Prinsip Koperasi</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->prinsip_koperasi }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Tata Kelola')->first()?->deskripsi['prinsip_koperasi'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -24,14 +26,14 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- Kelembagaan --}}
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">2. Kelembagaan</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->kelembagaan }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Tata Kelola')->first()?->deskripsi['kelembagaan'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -42,14 +44,14 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- Manajemen Koperasi --}}
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">3. Manajemen Koperasi</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->manajemen_koperasi }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Tata Kelola')->first()?->deskripsi['manajemen_koperasi'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -60,14 +62,14 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- Prinsip Syariah --}}
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">4. Prinsip Syariah (Opsional)</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->prinsip_syariah ?: '-' }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Tata Kelola')->first()?->deskripsi['prinsip_syariah'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -78,16 +80,18 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- File Display --}}
     <div class="mb-3">
         <label class="form-label fw-bold">Bukti TL Tata Kelola</label>
         <div class="mt-2 list-group">
-            @if ($tindaklanjut->bukti_tl_tk)
-            @foreach (json_decode($tindaklanjut->bukti_tl_tk) as $file)
+            @php
+                $buktitk = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Tata Kelola')->first()->bukti_tindaklanjut;
+                $files = $buktitk ?: [];
+            @endphp
+            @if (!empty($files))
+            @foreach ($files as $file)
                 @php
                     $filePath = asset($file);
                     $extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -119,7 +123,9 @@
     {{-- Risiko Inheren --}}
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">1. Risiko Inheren</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->risiko_inheren }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Profil Resiko')->first()?->deskripsi['risiko_inheren'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -137,7 +143,9 @@
     {{-- KPMR --}}
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">2. KPMR</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->kpmr }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Profil Resiko')->first()?->deskripsi['kpmr'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -148,16 +156,18 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     {{-- File Display --}}
     <div class="mb-3">
         <label class="form-label fw-bold">Bukti TL Profil Resiko</label>
         <div class="mt-2 list-group">
-            @if ($tindaklanjut->bukti_tl_pr)
-            @foreach (json_decode($tindaklanjut->bukti_tl_pr) as $file)
+            @php
+                $buktipr = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Profil Resiko')->first()->bukti_tindaklanjut;
+                $files = $buktipr ?: [];
+            @endphp
+            @if (!empty($files))
+            @foreach ($files as $file)
                 @php
                     $filePath = asset($file);
                     $extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -188,7 +198,9 @@
 
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">Kinerja Keuangan</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->kinerja_keuangan }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Kinerja Keuangan')->first()?->deskripsi['kinerja_keuangan'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -199,15 +211,17 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     <div class="mb-3">
         <label class="form-label fw-bold">Bukti TL Kinerja Keuangan</label>
         <div class="mt-2 list-group">
-            @if ($tindaklanjut->bukti_tl_kk)
-            @foreach (json_decode($tindaklanjut->bukti_tl_kk) as $file)
+            @php
+                $buktikk = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Kinerja Keuangan')->first()->bukti_tindaklanjut;
+                $files = $buktikk ?: [];
+            @endphp
+            @if (!empty($files))
+            @foreach ($files as $file)
                 @php
                     $filePath = asset($file);
                     $extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -238,7 +252,9 @@
 
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">Permodalan</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->permodalan }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Permodalan')->first()?->deskripsi['permodalan'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -249,15 +265,17 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     <div class="mb-3">
         <label class="form-label fw-bold">Bukti TL Permodalan</label>
         <div class="mt-2 list-group">
-            @if ($tindaklanjut->bukti_tl_pk)
-            @foreach (json_decode($tindaklanjut->bukti_tl_pk) as $file)
+            @php
+                $buktipk = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Permodalan')->first()->bukti_tindaklanjut;
+                $files = $buktipk ?: [];
+            @endphp
+            @if (!empty($files))
+            @foreach ($files as $file)
                 @php
                     $filePath = asset($file);
                     $extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -288,7 +306,9 @@
 
     <div class="mb-4 border rounded p-3">
         <label class="form-label fw-bold">Temuan Lainnya</label>
-        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">{{ $tindaklanjut->temuan_lainnya ?: '-' }}</div>
+        <div class="form-control" style="min-height: 80px; background-color: #f8f9fa;">
+            {{ $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Temuan Lainnya')->first()?->deskripsi['temuan_lainnya'] ?? '-' }}
+        </div>
 
         <div class="mt-3">
             <div class="form-check">
@@ -299,15 +319,17 @@
                 </label>
             </div>
         </div>
-
-
     </div>
 
     <div class="mb-3">
         <label class="form-label fw-bold">Bukti TL Temuan Lainnya</label>
         <div class="mt-2 list-group">
-            @if ($tindaklanjut->bukti_tl_tl)
-            @foreach (json_decode($tindaklanjut->bukti_tl_tl) as $file)
+            @php
+                $buktitl = $tindaklanjut->detailTindakLanjuts->where('nama_aspek', 'Temuan Lainnya')->first()->bukti_tindaklanjut;
+                $files = $buktitl ?: [];
+            @endphp
+            @if (!empty($files))
+            @foreach ($files as $file)
                 @php
                     $filePath = asset($file);
                     $extension = pathinfo($file, PATHINFO_EXTENSION);

@@ -49,7 +49,7 @@
                     <option value="Kabupaten Solok">Kabupaten Solok</option>
                     <option value="Kabupaten Solok Selatan">Kabupaten Solok Selatan</option>
                     <option value="Kabupaten Tanah Datar">Kabupaten Tanah Datar</option>
-                    <option value="Kota Bukittingi">Kota Bukittinggi</option>
+                    <option value="Kota Bukittinggi">Kota Bukittinggi</option>
                     <option value="Kota Padang">Kota Padang</option>
                     <option value="Kota Padang Panjang">Kota Padang Panjang</option>
                     <option value="Kota Pariaman">Kota Pariaman</option>
